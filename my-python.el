@@ -1,6 +1,6 @@
 ;; Aqui é a configuração do python
 ;; Você precisa ter instalado rope, ropemacs, ropemode
-;; e pymacs instalado
+;; e pymacs
 
 (require 'python)
 (autoload 'python-mode "python-mode" "Python Mode." t)
@@ -19,6 +19,8 @@
 
 ;; Adicionando ropemacs
 (pymacs-load "ropemacs" "rope-")
+;; Ajustando fixes do rope pra não quebrar no globoenv
+(setq ropemacs-codeassist-maxfixes 3)
 
 
 ;; Grato, EnigmaCurry.
@@ -75,23 +77,17 @@
                  (set (make-local-variable 'ac-sources)
                       (append ac-sources '(ac-source-rope)))
                  (set (make-local-variable 'ac-find-function) 'ac-python-find)
-                 (set (make-local-variable 'ac-candidate-function) 'ac-python-candidate)
-                 (set (make-local-variable 'ac-auto-start) nil)))
+                 (set (make-local-variable 'ac-candidate-function) 'ac-python-candidate)))
 
-(defun juca-python-autocomplete ()
-  ; Try the following:                                   
-  ; 1) Do a yasnippet expansion               
-  ; 2) Do a Rope code completion               
-  ; 3) Do an indent                                         
-  (interactive)
-  (if (eql (ac-start) 0)
-      (indent-for-tab-command)))
-
-(defadvice ac-start (before advice-turn-on-auto-start activate)
-  (set (make-local-variable 'ac-auto-start) t))
-(defadvice ac-cleanup (after advice-turn-off-auto-start activate)
-  (set (make-local-variable 'ac-auto-start) t))
+;; (defun juca-python-autocomplete ()
+;;   ; Try the following:                                   
+;;   ; 1) Do a yasnippet expansion               
+;;   ; 2) Do a Rope code completion               
+;;   ; 3) Do an indent                                         
+;;   (interactive)
+;;   (if (eql (ac-start) 0)
+;;       (indent-for-tab-command)))
 
 
-;; Deixando M-; para chamar auto-complete
-(define-key python-mode-map (kbd "M-;") 'juca-python-autocomplete)
+;; ;; Deixando M-; para chamar auto-complete
+;; (define-key python-mode-map (kbd "M-;") 'juca-python-autocomplete)

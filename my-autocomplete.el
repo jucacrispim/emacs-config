@@ -9,12 +9,13 @@
 ;; mudando a cor do menu do autocomplete
 (set-face-background 'ac-selection-face "black")
 
-;; sei lá que porcaria que fiz com o tab, agora tem que arrumar
-(defun arruma-tab ()
+;; O auto-complete deixa o tab como tecla dele, então vamos voltar ao normal
+(defun set-defult-tab-action ()
   (interactive)
   (indent-for-tab-command))
 
-(global-set-key "\t" 'arruma-tab)
+(global-set-key "\t" 'set-defult-tab-action)
 
-
+;; quantidade de caracteres que vai começar o auto-complete
+(set (make-local-variable 'ac-auto-start) t)
 

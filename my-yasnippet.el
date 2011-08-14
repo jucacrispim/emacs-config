@@ -10,5 +10,10 @@
 (yas/load-directory "~/.emacs.d/third-party/yasnippet/snippets")
 
 ;; meus snippets
-;; C-i C-p == import ipdb;ipdb.set_trace()
+;; todos os bindings dos meus snippets começam com C-c C-b
+;; 1) Python
+;;     i == import ipdb;ipdb.set_trace()
+;;     c == #-*- coding: utf-8 -*-
+;;     h == #!/usr/bin/env python
+;;          #-*- coding: utf-8 -*-
 (yas/load-directory "~/.emacs.d/my-snippets/")

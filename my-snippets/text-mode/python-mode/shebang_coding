@@ -1,0 +1,6 @@
+#name : shebang coding
+# binding:  "C-c C-b h"
+# --
+#!/usr/bin/env python
+#-*- coding: utf-8 -*-
+$0

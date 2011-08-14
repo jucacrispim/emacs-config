@@ -6,4 +6,8 @@
 (require 'yasnippet)
 (setq yas/trigger-key (kbd "C-c <kp-multiply>"))
 (yas/initialize)
+;; snippets padrão do yasnippet
 (yas/load-directory "~/.emacs.d/third-party/yasnippet/snippets")
+
+;; meus snippets
+(yas/load-directory "~/.emacs.d/my-snippets/")

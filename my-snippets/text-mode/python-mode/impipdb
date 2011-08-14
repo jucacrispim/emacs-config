@@ -1,0 +1,5 @@
+#name : import ipdb;ipdb.set_trace()
+# binding:  "C-i C-p"
+# --
+import ipdb;ipdb.set_trace()
+$0

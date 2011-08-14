@@ -1,0 +1,9 @@
+*~
+\#*
+.\#*
+*.pyc
+.ropeproject
+build
+auto-save-list
+ac-comphist.dat
+third-party/

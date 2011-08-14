@@ -46,7 +46,7 @@
 ;; Usado somente no laptop
 ;; global-set-key (kbd "M-;") 'dabbrev-expand)
 
-
-(load-library "my-python")
 (load-library "my-yasnippet")
 (load-library "my-autocomplete")
+(load-library "my-python")
+

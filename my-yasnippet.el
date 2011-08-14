@@ -10,4 +10,5 @@
 (yas/load-directory "~/.emacs.d/third-party/yasnippet/snippets")
 
 ;; meus snippets
+;; C-i C-p == import ipdb;ipdb.set_trace()
 (yas/load-directory "~/.emacs.d/my-snippets/")

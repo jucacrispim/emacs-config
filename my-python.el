@@ -20,7 +20,9 @@
 ;; Adicionando ropemacs
 (pymacs-load "ropemacs" "rope-")
 ;; Ajustando fixes do rope pra não quebrar no globoenv
-(setq ropemacs-codeassist-maxfixes 3)
+;; dá vários erros no rope com o globocore por causa dos import *
+;; e outras coisas
+(setq ropemacs-codeassist-maxfixes 10)
 
 
 ;; Grato, EnigmaCurry.
@@ -91,3 +93,11 @@
 
 ;; ;; Deixando M-; para chamar auto-complete
 ;; (define-key python-mode-map (kbd "M-;") 'juca-python-autocomplete)
+
+
+;; pychecker pyflakes
+
+(custom-set-variables
+ '(python-check-command "~/.emacs.d/pychecker.sh")
+ '(python-check-command-args (quote("")))
+ '(python-check-command "~/.emacs.d/pychecker.sh"))

@@ -45,8 +45,35 @@
 ;; Trocando atalho pra dynamic expansion
 (global-set-key (kbd "M-;") 'dabbrev-expand)
 
+;; multi-term
+(require 'multi-term)
+(setq multi-term-program "/usr/bin/zsh")
 
 (load-library "my-python")
 (load-library "my-yasnippet")
 (load-library "my-autocomplete")
 
+;; sql-mode para .migration
+(add-to-list 'auto-mode-alist '("\\.migration\\'" . sql-mode))
+
+;; Desativando a função (muito esperta, por sinal) de definir se
+;; split-window horizontal ou vertical
+(setq split-height-threshold nil)
+(setq split-width-threshold 0)
+
+
+;; Ajustando tamanho do frame
+;; C-J
+;;(set-frame-width (selected-frame) 100)
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+
+
+;; n3 mode (rdf, n3, turtle)
+(autoload 'n3-mode "n3-mode" "Major mode for OWL or N3 files" t)
+(add-hook 'n3-mode-hook
+          'turn-on-font-lock)
+
+(add-to-list 'auto-mode-alist '("\\.n3\\'" . n3-mode))
+(add-to-list 'auto-mode-alist '("\\.owl\\'" . n3-mode))
+(add-to-list 'auto-mode-alist '("\\.ttl\\'" . n3-mode))

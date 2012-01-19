@@ -17,5 +17,5 @@
 (global-set-key "\t" 'set-defult-tab-action)
 
 ;; quantidade de caracteres que vai começar o auto-complete
-(set (make-local-variable 'ac-auto-start) t)
+(set (make-local-variable 'ac-auto-start) 4)
 

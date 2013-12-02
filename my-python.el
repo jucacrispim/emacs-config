@@ -11,6 +11,7 @@
 ;; Carregando Pymacs
 ;; Pymacs permite execução de código python no emacs e código
 ;; elisp no python
+(require 'pymacs)
 (autoload 'pymacs-apply "pymacs")
 (autoload 'pymacs-call "pymacs")
 (autoload 'pymacs-eval "pymacs" nil t)
@@ -19,10 +20,11 @@
 
 ;; Adicionando ropemacs
 (pymacs-load "ropemacs" "rope-")
-;; Ajustando fixes do rope pra não quebrar no globoenv
-;; dá vários erros no rope com o globocore por causa dos import *
-;; e outras coisas
-(setq ropemacs-codeassist-maxfixes 10)
+(setq ropemacs-enable-autoimport t)
+(setq ropemacs-codeassist-maxfixes 3)
+(setq python-check-command "~/.emacs.d/pychecker.sh")
+
+(require 'virtualenv)
 
 
 ;; Grato, EnigmaCurry.
@@ -81,14 +83,14 @@
                  (set (make-local-variable 'ac-find-function) 'ac-python-find)
                  (set (make-local-variable 'ac-candidate-function) 'ac-python-candidate)))
 
-;; (defun juca-python-autocomplete ()
-;;   ; Try the following:                                   
-;;   ; 1) Do a yasnippet expansion               
-;;   ; 2) Do a Rope code completion               
-;;   ; 3) Do an indent                                         
-;;   (interactive)
-;;   (if (eql (ac-start) 0)
-;;       (indent-for-tab-command)))
+ (defun juca-python-autocomplete ()
+   ; Try the following:                                   
+  ; 1) Do a yasnippet expansion               
+  ; 2) Do a Rope code completion               
+  ; 3) Do an indent                                         
+  (interactive)
+  (if (eql (ac-start) 0)
+      (indent-for-tab-command)))
 
 
 ;; ;; Deixando M-; para chamar auto-complete
@@ -96,8 +98,3 @@
 
 
 ;; pychecker pyflakes
-
-(custom-set-variables
- '(python-check-command "~/.emacs.d/pychecker.sh")
- '(python-check-command-args (quote("")))
- '(python-check-command "~/.emacs.d/pychecker.sh"))

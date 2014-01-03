@@ -1,5 +1,3 @@
-;; Carregando auto-compele
-(add-to-list 'load-path "~/.emacs.d/third-party/auto-complete")
 (require 'auto-complete)
 
 ;; Usando C-n e C-p para escolher as opções do auto-complete
@@ -18,4 +16,3 @@
 
 ;; quantidade de caracteres que vai começar o auto-complete
 (set (make-local-variable 'ac-auto-start) 4)
-

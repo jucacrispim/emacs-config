@@ -18,14 +18,14 @@
 
 (defun shift-right ()
   (interactive)
-  (shift-region 4))
+  (shift-region 1))
 
 (defun shift-left ()
   (interactive)
-  (shift-region -4))
+  (shift-region -1))
 
 ;; Bind (shift-right) and (shift-left) function to your favorite keys. I use
-;; the following so that Ctrl-Shift-Right Arrow moves selected text one 
+;; the following so that Ctrl-Shift-Right Arrow moves selected text one
 ;; column to the right, Ctrl-Shift-Left Arrow moves selected text one
 ;; column to the left:
 
@@ -34,7 +34,7 @@
 
 ;; Desabilitando as ações do mouse
 (dolist (k '(;;[mouse-1] [down-mouse-1] [drag-mouse-1]
-	     [double-mouse-1] [triple-mouse-1]  
+	     [double-mouse-1] [triple-mouse-1]
              [mouse-2] [down-mouse-2] [drag-mouse-2]
 	     [double-mouse-2] [triple-mouse-2]
              [mouse-3] [down-mouse-3] [drag-mouse-3]
@@ -46,4 +46,3 @@
   (global-unset-key k))
 
 (setq mode-line-column-line-number-mode-map nil)
-

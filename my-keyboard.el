@@ -33,7 +33,7 @@
 (global-set-key [C-S-left] 'shift-left)
 
 ;; Desabilitando as ações do mouse
-(dolist (k '(;;[mouse-1] [down-mouse-1] [drag-mouse-1]
+(dolist (k '([mouse-1] [down-mouse-1] [drag-mouse-1]
 	     [double-mouse-1] [triple-mouse-1]
              [mouse-2] [down-mouse-2] [drag-mouse-2]
 	     [double-mouse-2] [triple-mouse-2]

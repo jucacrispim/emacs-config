@@ -8,3 +8,5 @@ auto-save-list
 ac-comphist.dat
 image-dired/
 *\.elc
+el-get/
+elpa/

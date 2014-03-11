@@ -41,6 +41,7 @@
 (load-library "my-yasnippet")
 (load-library "my-keyboard")
 (load-library "my-fullscreen")
+(load-library "my-term")
 
 ;; sql-mode para .migration
 (add-to-list 'auto-mode-alist '("\\.migration\\'" . sql-mode))

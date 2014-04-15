@@ -10,3 +10,5 @@ image-dired/
 *\.elc
 el-get/
 elpa/
+session.*
+.python-environments/

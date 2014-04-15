@@ -7,7 +7,7 @@
 (add-to-list 'interpreter-mode-alist '("python" . python-mode))
 
 
-(require 'virtualenv)
+(require 'python-environment)
 
 (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:setup-keys t)
@@ -23,5 +23,5 @@
 (add-hook 'write-file-hooks (lambda () (delete-whitespace-on-save)))
 
 
-
 ;; pychecker pyflakes
+(setq python-check-command "~/.emacs.d/pychecker.sh")

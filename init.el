@@ -43,7 +43,7 @@
 (load-library "my-fullscreen")
 (load-library "my-term")
 
-;; sql-mode para .migration
+;; sql-mode para .migratidion
 (add-to-list 'auto-mode-alist '("\\.migration\\'" . sql-mode))
 
 ;; Mostrando espaços em branco inúteis

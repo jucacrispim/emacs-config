@@ -38,6 +38,7 @@
 (load-library "my-appearance")
 (load-library "my-autocomplete")
 (load-library "my-python")
+(load-library "my-js")
 (load-library "my-yasnippet")
 (load-library "my-keyboard")
 (load-library "my-fullscreen")
@@ -48,3 +49,15 @@
 
 ;; Mostrando espaços em branco inúteis
 (setq whitespace-style '(face trailing))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(safe-local-variable-values (quote ((test-case-name . twisted\.test\.test_process) (test-case-name . twisted\.test\.test_log)))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

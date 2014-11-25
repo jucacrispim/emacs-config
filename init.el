@@ -9,7 +9,7 @@
 ;; yasnippet.el
 ;;
 ;; Precisa também instalar alguns pacotes python
-;; rope, ropemacs, ropemode, pymacs, pep8, pyflakes.
+;; pep8 e pyflakes.
 ;;
 ;; Para o virtualenv funcionar direito, seus ambientes
 ;; precisam ficar em ~/.virtualenvs
@@ -24,18 +24,10 @@
 '(tab-width 4)
 
 ;; Adicionando diretório com arquivos de configuração do emacs.
-(add-to-list 'load-path "~/.emacs.d")
-
-;; Adicionando diretório com pacotes elisp de terceiros
-(add-to-list 'load-path "~/.emacs.d/third-party")
-
-;; multi-term
-(require 'multi-term)
-(setq multi-term-program "/usr/bin/zsh")
+(add-to-list 'load-path "~/.emacs.d/lisp")
 
 (load-library "my-el-get")
 (load-library "my-news")
-(load-library "my-appearance")
 (load-library "my-autocomplete")
 (load-library "my-python")
 (load-library "my-js")
@@ -43,21 +35,16 @@
 (load-library "my-keyboard")
 (load-library "my-fullscreen")
 (load-library "my-term")
+(load-library "my-appearance")
 
 ;; sql-mode para .migratidion
 (add-to-list 'auto-mode-alist '("\\.migration\\'" . sql-mode))
 
+;; python-mode para toxicbuild.conf
+(add-to-list 'auto-mode-alist '("\\toxicbuild.conf\\'" . python-mode))
+
 ;; Mostrando espaços em branco inúteis
 (setq whitespace-style '(face trailing))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(safe-local-variable-values (quote ((test-case-name . twisted\.test\.test_process) (test-case-name . twisted\.test\.test_log)))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
+(require 'smartparens)
+(smartparens-mode)

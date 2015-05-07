@@ -1,0 +1,9 @@
+\#*
+session.*
+*~
+el-get/
+elpa/
+ac-comphist.dat
+firstrun
+eshell/
+.python-environments/

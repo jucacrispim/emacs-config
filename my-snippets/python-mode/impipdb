@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-#name : import ipdb;ipdb.set_trace()
-# key: ipipdb
-# binding: C-c C-b i
-# --
-import ipdb;ipdb.set_trace()

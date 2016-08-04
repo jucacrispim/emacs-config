@@ -1,0 +1,42 @@
+--- multi-term-switches.el	2016-03-03 12:33:42.763219668 -0300
++++ multi-term.el	2016-03-03 12:28:38.899222290 -0300
+@@ -416,6 +416,13 @@
+   :group 'multi-term
+   )
+ 
++(defcustom multi-term-dedicated-side nil
++  "By default multi-term-dedicated-open creates a new window below the selected-window. Change it to `left' for `right' to create a window to the left or right of the selected-window.
++
++Default is nil."
++  :type 'string
++  :group 'multi-term)
++
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Constant ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ (defconst multi-term-dedicated-buffer-name "MULTI-TERM-DEDICATED"
+   "The buffer name of dedicated `multi-term'.")
+@@ -643,7 +650,6 @@
+ 	      (make-term term-name shell-name nil multi-term-program-switches)
+ 	    ;; Passing multi-term-program-switches as a list
+ 	    (apply 'make-term term-name shell-name nil multi-term-program-switches))
+-
+         (make-term term-name shell-name)))))
+ 
+ 
+@@ -748,10 +754,16 @@
+ 
+ (defun multi-term-dedicated-get-window ()
+   "Get `multi-term' dedicated window."
++  (if (or (equal multi-term-dedicated-side "left")
++	  (equal multi-term-dedicated-side "right"))
++      (setq multi-term-dedicated-window (split-window
++					 (selected-window)
++					 nil multi-term-dedicated-side))
+   (setq multi-term-dedicated-window
+         (split-window
+          (selected-window)
+-         (- (multi-term-current-window-take-height) multi-term-dedicated-window-height))))
++         (- (multi-term-current-window-take-height) multi-term-dedicated-window-height)))))
++
+ 
+ (defun multi-term-dedicated-get-buffer-name ()
+   "Get the buffer name of `multi-term' dedicated window."

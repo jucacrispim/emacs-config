@@ -7,3 +7,11 @@ ac-comphist.dat
 firstrun
 eshell/
 .python-environments/
+/.mc-lists.el
+/ede-projects.el
+/ido.last
+/places
+/recentf
+request/
+/smex-items
+url/

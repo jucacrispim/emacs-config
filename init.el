@@ -19,6 +19,7 @@
    (quote
     ((pdj:venv-name . "toxicbuild")
      (pdj:project-directory . "/home/juca/mysrc/toxicbuild/")
+     (pdj:test-command . "python setup.py test")
      (pdj:coverage-command . "./build-scripts/check_coverage.sh toxicbuild 100")
      (pdj:py-autopep8 . "t")
      (pdj:venv-name . "mongomotor")

@@ -129,6 +129,10 @@
   ;; setting tab to use 4 spaces
   (setq-default ident-tabs-mode nil)
   (setq tabify nil)
+  ;; browse-kill-ring window behavior
+  (setq browse-kill-ring-quit-action 'save-and-restore)
+  ;; do not show duplicate items in history
+  (setq browse-kill-ring-display-duplicates nil)
   '(tab-width 4)
   ;; always use a final blank line
   (setq require-final-newline t))

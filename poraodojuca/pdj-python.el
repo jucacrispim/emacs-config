@@ -21,6 +21,11 @@
 (defcustom pdj:py-autopep8 nil
   "Indicates if we should enable autopep8 on save")
 
+(defcustom pdj:py-custom-keywords
+  '(("async def\\|async for\\|await" . font-lock-keyword-face))
+
+  "Custom keywords for Python language. Default are for Python3.5 async stuff")
+
 
 (defun pdj:py-reset-customvars ()
   "Returns custom var to theirs defalut values."
@@ -28,7 +33,10 @@
   (setq pdj:py-test-command "python setup.py test -q")
   (setq pdj:venv-name nil)
   (setq pdj:py-debug-buffer-name "py-debug")
-  (setq pdj:py-autopep8 nil))
+  (setq pdj:py-autopep8 nil)
+  (setq pdj:py-custom-keywords
+	'(("async def\\|async for\\|await" . font-lock-keyword-face))))
+
 
 
 (defun pdj:py-set-test-command ()
@@ -52,12 +60,16 @@
 
   (setenv "PYTHONPATH" nil))
 
-
 (defun pdj:enable-autopep8 ()
   "Adds py-autopep8-enable-on-save hook to python-mode-hook if pdj:py-autopep8"
 
   (if pdj:py-autopep8
       (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)))
+
+(defun pdj:disable-autopep8 ()
+  "Removes py-autopep8-enable-on-save from python-mode-hook"
+
+  (remove-hook 'python-mode-hook 'py-autopep8-enable-on-save))
 
 
 ;; Interactive funcs
@@ -400,6 +412,18 @@
 
 ;; Hooks
 
+(defun pdj:py-add-custom-keywords ()
+  "Adds custom keywords, defined in `pdj:py-custom-keywords', for Python."
+
+  (font-lock-add-keywords 'python-mode pdj:py-custom-keywords))
+
+
+(defun pdj:py-remove-custom-keywords ()
+  "Removes custom keywords from Python."
+
+  (font-lock-remove-keywords 'python-mode pdj:py-custom-keywords))
+
+
 (defun pdj:py-venv-hooks ()
   "Hooks for virtualenv. Activates virtualenv for the current buffer."
 
@@ -506,7 +530,8 @@
   (pdj:py-set-test-command)
   (pdj:add-project-dir-to-python-path)
   (pdj:py-create-menu)
-  (pdj:enable-autopep8))
+  (pdj:enable-autopep8)
+  (pdj:py-add-custom-keywords))
 
 
 (defun pdj:py-setup ()
@@ -523,7 +548,9 @@
   (pdj:py-deactivate-jedi-hooks)
   (pdj:py-deactivate-ac-hooks)
   (pdj:py-deactivate-flycheck-hooks)
-  (pdj:py-remove-project-dir-from-python-path))
+  (pdj:disable-autopep8)
+  (pdj:py-remove-project-dir-from-python-path)
+  (pdj:py-remove-custom-keywords))
 
 
 (provide 'pdj-python)

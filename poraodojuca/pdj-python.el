@@ -1,6 +1,7 @@
 ;; Hooks for Python.
 ;; Requires: pdj-utils, pdj-common, virtualenvwrapper, flycheck and radon
 
+(require 'cl)
 (require 'pdj-common)
 (require 'pdj-utils)
 (require 'virtualenvwrapper)
@@ -278,6 +279,55 @@
   (python-shell-send-file file-name process temp-file-name)
   (pdj:py-switch-to-shell))
 
+
+(defun pdj:py-upload-to-pypi ()
+  "Creates a package and uploads to pypi"
+
+  (interactive)
+
+  (defvar pdj:--dist-dir nil)
+  (setq pdj:--dist-dir (concat pdj:project-directory "dist/"))
+  (message pdj:--dist-dir)
+  (defvar pdj:--package-command "python setup.py sdist")
+  (defvar pdj:--upload-command "twine upload")
+
+  (defvar pdj:--upload-file-command nil)
+  ;; We need to know what files were in the directory before
+  ;; the new package was created so we upload the right package
+  (defvar pdj:--old-package-files nil)
+  (defvar pdj:--new-package-files nil)
+  (defvar pdj:--new-package-file nil)
+
+  (defvar pdj:--packaging-buffer-name "Packaging")
+
+  ;; files before the package creation
+  (setq pdj:--old-package-files (directory-files pdj:--dist-dir))
+
+  ;; creating the package
+  (pdj:run-in-term-on-project-directory pdj:--package-command
+					pdj:--packaging-buffer-name)
+  ;; we wait here so the async process in the first term has time
+  ;; to finish.
+  (run-with-timer
+   0.5 nil
+   (lambda ()
+     ;; files after the package creation
+     (setq pdj:--new-package-files (directory-files pdj:--dist-dir))
+     ;; new file
+     (setq pdj:--new-package-file
+	   (car
+	    (set-difference pdj:--old-package-files pdj:--new-package-files)))
+
+     ;; command to upload the package
+     (setq pdj:--upload-file-command
+	   (concat pdj:--upload-command
+		   (concat " " (concat pdj:--dist-dir
+				       pdj:--new-package-file))))
+
+     (pdj:run-in-term-on-project-directory
+      pdj:--upload-file-command
+      pdj:--packaging-buffer-name))))
+
 ;; :enable for test or debug suite menu.
 (defun pdj:--is-test-suite ()
   "Indicates if the suite under cursor is a test suite."
@@ -407,7 +457,17 @@
     'debug-test-suite)
 
   (define-key-after python-mode-map [menu-bar pdj-python debug]
-    (list 'menu-item "Debug" menu-bar-pdj-python-debug)))
+    (list 'menu-item "Debug" menu-bar-pdj-python-debug))
+
+  ;; Packaging
+  (defvar menu-bar-pdj-python-packaging (make-sparse-keymap "Packaging"))
+
+  (define-key menu-bar-pdj-python-packaging [upload-to-pypi]
+    '(menu-item "Upload to PyPI" pdj:py-upload-to-pypi
+		:help "Uploads the package to PyPI"))
+
+  (define-key-after python-mode-map [menu-bar pdj-python packaging]
+    (list 'menu-item "Packaging" menu-bar-pdj-python-packaging)))
 
 
 ;; Hooks

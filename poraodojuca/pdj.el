@@ -19,9 +19,10 @@
 
 
 (defun pdj:setup ()
-  (pdj:bootstrap)
+  (server-start)
   (require 'pdj-appearance)
   (if pdj:appearance (pdj:appearance-setup))
+  (pdj:bootstrap)
   (require 'pdj-common)
   (require 'pdj-python)
   (require 'pdj-elisp)
@@ -31,9 +32,7 @@
   (pdj:el-setup)
   (pdj:js-setup)
 
-  (add-to-list 'pdj:kill-all-buffers-hooks 'pdj:py-deactivate)
-
-  (server-start))
+  (add-to-list 'pdj:kill-all-buffers-hooks 'pdj:py-deactivate))
 
 
 (provide 'pdj)

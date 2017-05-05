@@ -5,7 +5,10 @@
 
 (require 'pdj)
 (setq pdj:appearance t)
-(pdj:setup)
+(add-hook 'window-setup-hook ;;'pdj:setup)
+	  (lambda ()
+	    (run-with-timer 1 nil 'pdj:setup)))
+
 
 
 
@@ -19,6 +22,8 @@
    (quote
     ((pdj:venv-name . "toxicbuild")
      (pdj:project-directory . "/home/juca/mysrc/toxicbuild/")
+     (pdj:venv-name . "ptbkp")
+     (pdj:project-directory . "/home/juca/mysrc/ptbkp/")
      (pdj:test-command . "python setup.py test")
      (pdj:coverage-command . "./build-scripts/check_coverage.sh toxicbuild 100")
      (pdj:py-autopep8 . "t")

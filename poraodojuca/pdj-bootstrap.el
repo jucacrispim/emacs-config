@@ -1,44 +1,53 @@
 ;; Install required packages for pdj config
 
 (require 'package)
-(package-initialize)
+(require 'teletype)
+
+;;;(package-initialize)
 
 (defcustom pdj:first-run-file "~/.emacs.d/firstrun"
   "File that indicates if pdj:boostrap was already done.")
 
 
 (defun pdj:print (msg)
-  "Print to buffer with a new line"
-  (insert (concat msg "\n")))
+  "Print to buffer with animation"
+  (teletype-text msg 0.1 0.5))
 
 
 (defun pdj:install-if-needed (pkgrequire)
   "Installs a package if it is not already installed."
 
-  (unless (require pkgrequire nil 'noerror)
-    (insert (concat (concat "Obtaining "  (symbol-name pkgrequire)) "\n"))
-    (package-install pkgrequire)))
+  (if (require pkgrequire nil t)
+      (pdj:print (concat (concat
+			 (symbol-name pkgrequire) " already prensent.") "\n"))
+
+    (progn
+
+      (pdj:print (concat (concat
+			  "Obtaining "  (symbol-name pkgrequire)) "\n"))
+      (package-install pkgrequire))))
 
 
 (defun pdj:bootstrap ()
 
   (interactive)
 
-
   (unless (file-exists-p pdj:first-run-file)
     (setq output-buffer (get-buffer-create "*Emacs church service*"))
-
     (switch-to-buffer output-buffer)
+
+    (setq emacs-banner-bootstrap (create-image "splash.svg"))
+    (insert-image emacs-banner-bootstrap)
+    (sit-for 1)
+
+    (setq msg (concat "\n\n" "Blessings, my son. Welcome to the Emacs church."
+		      "\nYou ought to acquire some canons. Be patient.\n\n"))
+    (pdj:print msg)
+
     (add-to-list 'package-archives
     		 '("melpa" . "http://melpa.org/packages/"))
 
-    (setq emacs-banner-bootstrap (create-image "splash.svg"))
-
-    (insert-image emacs-banner-bootstrap)
-    (pdj:print "\n")
-    (pdj:print "Blessings, my son. Welcome to the Emacs church.")
-    (pdj:print "You need to acquire some canons. Be patient.\n")
-
+    (pdj:print "Fetching index canonice\n")
     (package-refresh-contents)
 
     (pdj:install-if-needed 'virtualenvwrapper)
@@ -53,7 +62,7 @@
     (pdj:install-if-needed 'buffer-move)
 
     (pdj:print "\nAll canons obtained.")
-    (pdj:print "Happy hacking and may St. Ignutius bless you.")
+    (pdj:print "\nHappy hacking and may St. Ignutius bless you.")
     (append-to-file "first run ok" nil pdj:first-run-file)))
 
 

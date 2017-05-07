@@ -5,9 +5,9 @@
 
 (require 'pdj)
 (setq pdj:appearance t)
-(add-hook 'window-setup-hook ;;'pdj:setup)
-	  (lambda ()
-	    (run-with-timer 1 nil 'pdj:setup)))
+(add-hook 'window-setup-hook 'pdj:setup)
+	  ;; (lambda ()
+	  ;;   (run-with-timer 1 nil 'pdj:setup)))
 
 
 
@@ -20,7 +20,8 @@
  '(column-number-mode t)
  '(safe-local-variable-values
    (quote
-    ((pdj:venv-name . "toxicbuild")
+    ((pdj:project-directory . "~/mysrc/ptbkp/")
+     (pdj:venv-name . "toxicbuild")
      (pdj:project-directory . "/home/juca/mysrc/toxicbuild/")
      (pdj:venv-name . "ptbkp")
      (pdj:project-directory . "/home/juca/mysrc/ptbkp/")
@@ -39,4 +40,12 @@
      (pdj:coverage-command . "./check_coverage.sh")
      (pdj:venv-name . "jaobi")
      (pdj:project-directory . "/home/juca/mysrc/jaobi/")
-     (pdj:coverage-command . "./build-scripts/check_coverage.sh jaobi 100")))))
+     (pdj:coverage-command . "./build-scripts/check_coverage.sh jaobi 100"))))
+ '(show-paren-mode t)
+ '(tool-bar-mode nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

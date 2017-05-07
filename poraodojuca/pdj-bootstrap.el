@@ -22,10 +22,13 @@
 			 (symbol-name pkgrequire) " already prensent.") "\n"))
 
     (progn
-
       (pdj:print (concat (concat
 			  "Obtaining "  (symbol-name pkgrequire)) "\n"))
       (package-install pkgrequire))))
+
+
+(defun pdj:boostrap-is-done ()
+  (file-exists-p pdj:first-run-file))
 
 
 (defun pdj:bootstrap ()
@@ -47,7 +50,7 @@
     (add-to-list 'package-archives
     		 '("melpa" . "http://melpa.org/packages/"))
 
-    (pdj:print "Fetching index canonice\n")
+    (pdj:print "Fetching index canonice...\n\n")
     (package-refresh-contents)
 
     (pdj:install-if-needed 'virtualenvwrapper)
@@ -61,8 +64,8 @@
     (pdj:install-if-needed 'magit)
     (pdj:install-if-needed 'buffer-move)
 
-    (pdj:print "\nAll canons obtained.")
-    (pdj:print "\nHappy hacking and may St. Ignutius bless you.")
+    (pdj:print "\nAll canons acquired.")
+    (pdj:print "\nHappy hacking and may St. Ignutius be with you.")
     (append-to-file "first run ok" nil pdj:first-run-file)))
 
 

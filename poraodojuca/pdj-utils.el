@@ -149,5 +149,25 @@ The difference from this function to multi-term's function is that here we pop-t
 			   (setq buffers2kill (cons buffer buffers2kill)))))
     (display-splash-screen)))
 
+(defun pdj:ask (prompt &optional default)
+  "Prompts the user with `prompt' and returns the value"
+
+
+  (defvar pdj:--ask-out nil)
+
+  (let (pdj:--ask-out)
+    (if default
+	(setq prompt (concat prompt " (" default "): "))
+      (setq prompt (concat prompt ": ")))
+    (while (or (equal pdj:--ask-out "") (not pdj:--ask-out))
+      (setq pdj:--ask-out (read-string prompt nil nil default)))
+    pdj:--ask-out))
+
+(defun pdj:read-file (path)
+  "Returns the contents of a file as a string."
+
+  (with-temp-buffer
+    (insert-file-contents path)
+    (buffer-string)))
 
 (provide 'pdj-utils)

@@ -1,7 +1,9 @@
 ;; Hooks for Python.
-;; Requires: pdj-utils, pdj-common, virtualenvwrapper, flycheck and radon
+;; Requires: jedi, pdj-utils, pdj-common, virtualenvwrapper,
+;; flycheck and radon
 
 (require 'cl)
+(require 'jedi)
 (require 'pdj-common)
 (require 'pdj-utils)
 (require 'virtualenvwrapper)
@@ -26,6 +28,11 @@
   '(("async def\\|async for\\|await" . font-lock-keyword-face))
 
   "Custom keywords for Python language. Default are for Python3.5 async stuff")
+
+(defcustom pdj:py-pip-command "pip" "Command used to install python packages")
+
+(defcustom pdj:py-requirements-file "requirements.txt"
+  "File that contains a list of dependencies to install with pip.")
 
 
 (defun pdj:py-reset-customvars ()
@@ -74,6 +81,34 @@
 
 
 ;; Interactive funcs
+
+(defun pdj:py-pip-install (what)
+  "Installs `what' using pip"
+
+  (pdj:execute-on-project-directory
+   'pdj:run-in-term (concat pdj:py-pip-command " install " what) "bootstrap"))
+
+(defun pdj:py-install-requirements ()
+  "Install the dependencies of a project."
+
+  (if pdj:py-requirements-file
+      (pdj:py-pip-install (concat "-r " pdj:py-requirements-file
+				  ;; these are used by emacs.
+				  " flake8 autopep8 ipython==4.0.0 ipdb"))
+    (error "No requirements file.")))
+
+(defun pdj:py-bootstrap ()
+  "Installs the project dependencies and the jedi server."
+
+  (defvar pdj:py--instal-server-cmd
+    (mapconcat 'identity jedi:install-server--command " "))
+
+  (deferred:$
+    (deferred:next
+      (lambda () (pdj:run-in-term-on-project-directory
+		  pdj:py--instal-server-cmd "bootstrap")))
+    (deferred:nextc it
+      (lambda () (pdj:py-install-requirements)))))
 
 (defun pdj:py-package ()
   "The python package for the current buffer"
@@ -358,7 +393,7 @@
 		:help "Shift region left by a single indentation step"))
 
   (define-key-after python-mode-map [menu-bar pdj-python shift-region-right]
-    '(menu-item "Shift region right" python-indent-shift-left
+    '(menu-item "Shift region right" python-indent-shift-right
 		:enable mark-active
 		:help "Shift region left by a single indentation step")
     'shift-region-left)

@@ -3,7 +3,7 @@
 (require 'package)
 (require 'teletype)
 
-;;;(package-initialize)
+(package-initialize)
 
 (defcustom pdj:first-run-file "~/.emacs.d/firstrun"
   "File that indicates if pdj:boostrap was already done.")

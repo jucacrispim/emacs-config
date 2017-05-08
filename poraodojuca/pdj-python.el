@@ -46,7 +46,6 @@
 	'(("async def\\|async for\\|await" . font-lock-keyword-face))))
 
 
-
 (defun pdj:py-set-test-command ()
   "Sets `pdj:test-command' to `pdj:py-test-command' if it is not defined."
 

@@ -43,8 +43,54 @@ template."
 				      pdj:prj--template-contents t)))
 
   (setq pdj:prj--ret (concat dest-dir "/" ".dir-locals.el"))
-  (append-to-file pdj:prj--template-contents nil pdj:prj--ret)
+
+  (write-region pdj:prj--template-contents nil pdj:prj--ret)
   pdj:prj--ret)
+
+
+(defun pdj:prj-create-readme-file (readme-msg dest-dir)
+  "Creates a README file in `dest-dir' using `readme-msg' as its
+content."
+
+  (defvar pdj:prj--readme-path (concat dest-dir "/" "README"))
+
+  (write-region readme-msg nil pdj:prj--readme-path))
+
+
+(defun pdj:prj-write-setup-py (vars dest-dir)
+  "Writes a setup.py file in `dest-dir'. `vars' are the
+variables we should replace in the template."
+
+  (defvar pdj:prj--template-contents nil)
+  (defvar pdj:prj--template-key nil)
+  (defvar pdj:prj--template-value nil)
+  (defvar pdj:prj--ret nil)
+
+  (setq pdj:prj--template-contents (pdj:read-file
+				    (pdj:prj-get-template-file "setup.py.tmpl")))
+
+  (dolist (element vars pdj:prj--ret)
+    (setq pdj:prj--template-key (car element))
+    (setq pdj:prj--template-value (car (cdr element)))
+    (setq pdj:prj--template-contents (replace-regexp-in-string
+				      pdj:prj--template-key
+				      pdj:prj--template-value
+				      pdj:prj--template-contents t)))
+
+  (setq pdj:prj--ret (concat dest-dir "/" "setup.py"))
+
+  (write-region pdj:prj--template-contents nil pdj:prj--ret)
+  pdj:prj--ret)
+
+
+(defun pdj:prj-create-py-requirements-file (req-fname dest-dir)
+  "Creates an empty requirements file for a python project."
+
+  (defvar pdj:prj--new-requirements-file (concat dest-dir "/" req-fname))
+
+  (write-region "# put your requirements here\n" nil
+		pdj:prj--new-requirements-file))
+
 
 (defun pdj:prj-create-python-project ()
   "Creates a new python project. Creates the project directory  and a setup
@@ -63,6 +109,7 @@ listed in a requirements file using pip."
   (defvar pdj:prj--py-autopep8 nil)
   (defvar pdj:prj--template-vars nil)
   (defvar pdj:prj--dir-locals-file nil)
+  (defvar pdj:prj--py-main-package-path nil)
 
   ;; first we ask the info we need.
   (setq pdj:prj--project-name (pdj:ask "Project name"))
@@ -83,6 +130,7 @@ listed in a requirements file using pip."
 	`(("{{PROJECT-DIRECTORY}}" ,pdj:prj--project-dir)
 	  ("{{VENV-NAME}}" ,pdj:prj--venv-name)
 	  ("{{TEST-COMMAND}}" ,pdj:prj--test-command)
+	  ("{{PROJECT-NAME}}" ,pdj:prj--project-name)
 	  ("{{COVERAGE-COMMAND}}" ,pdj:prj--coverage-command)))
 
   (if pdj:prj--py-autopep8
@@ -91,8 +139,9 @@ listed in a requirements file using pip."
 
   ;; now we have everthing needed, lets start.
   ;; creating the project dir
-  (unless (file-exists-p pdj:prj--project-dir)
-    (make-directory pdj:prj--project-dir t))
+  (unless (file-exists-p
+	   (concat pdj:prj--project-dir "/" pdj:prj--project-name))
+    (make-directory (concat pdj:prj--project-dir "/" pdj:prj--project-name) t))
 
   ;; here we write a .dir-locals.el file
   (setq pdj:prj--dir-locals-file (pdj:prj-write-dir-locals
@@ -114,10 +163,25 @@ listed in a requirements file using pip."
   (put 'safe-local-variable-values 'customized-value
        (list (custom-quote (symbol-value 'safe-local-variable-values))))
 
+  ;; saving stuff
+  (customize-save-variable
+   'safe-local-variable-values safe-local-variable-values)
+
   ;; removing autopep8 stuff if it was not setted.
   (set-buffer (find-file-noselect pdj:prj--dir-locals-file))
   (while (re-search-forward "(pdj:py-autopep8 . \"nil\")" nil t)
     (replace-match ""))
+
+  ;; creating the setup.py file
+  (pdj:prj-write-setup-py pdj:prj--template-vars pdj:prj--project-dir)
+
+  ;; creating readme
+  (pdj:prj-create-readme-file "My awesome Python project"
+			      pdj:prj--project-dir)
+
+  ;; creating requirements
+  (pdj:prj-create-py-requirements-file pdj:prj--requirements-file
+				       pdj:prj--project-dir)
 
   ;; creating the virtualenv
   (unless (member pdj:prj--venv-name (venv-get-candidates))
@@ -135,7 +199,7 @@ listed in a requirements file using pip."
 ;; (define-key global-map [menu-bar pdj-ede] nil)
 
 (defun pdj:prj-create-menu ()
-  "Creates a Development menu with pdj:ede functions."
+  "Creates a Development menu with pdj:prj functions."
 
   (interactive)
 

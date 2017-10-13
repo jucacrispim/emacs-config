@@ -17,13 +17,11 @@
 (defcustom pdj:appearance t
   "If not nil the color theme and other appearence stuff will be used.")
 
+(defcustom pdj:custom-commands nil
+  "Loads a file with custom commands for a project if not nil")
+
 
 (defun pdj:--do-setup ()
-
-  (add-to-list 'load-path "~/.emacs.d/poraodojuca")
-  (add-to-list 'load-path "~/.emacs.d/third")
-  (add-to-list 'load-path "~/.emacs.d/third/multi-term-20150220.1320-pdj/")
-
   (require 'pdj-common)
   (require 'pdj-python)
   (require 'pdj-elisp)

@@ -53,7 +53,17 @@ The difference from this function to multi-term's function is that here we pop-t
 
   (interactive)
 
-  (pdj:execute-on-project-directory 'pdj:run-in-term command term-name))
+  (pdj:execute-on-project-directory 'pdj:run-in-term command term-name)
+  nil)
+
+
+(defun pdj:deferred-process (command)
+  "A deferred wrapper of `pdj:run-in-term-on-project-directory'.
+Return a deferred object. The process name and buffer name of the
+argument of the `pdj:run-in-term-on-project-directory' are generated
+by this function automatically. The next deferred object receives stdout
+string from the command process."
+  (deferred:process-gen 'pdj:run-in-term-on-project-directory command))
 
 
 (defun pdj:compile-on-project-directory (compile-command)

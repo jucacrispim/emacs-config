@@ -16,7 +16,7 @@
   "Command to run Python tests")
 
 (defcustom pdj:venv-name nil
-  "Virtualenv name for be used in the buffer. Customize this via .dir-locals.el")
+  "Virtualenv name to be used in the buffer. Customize this via .dir-locals.el")
 
 (defcustom pdj:py-debug-buffer-name "py-debug"
   "Name of the buffer for python tests.")
@@ -35,6 +35,16 @@
   "File that contains a list of dependencies to install with pip.")
 
 
+(defcustom pdj:py-package-command "python setup.py sdist"
+  "Commands to create a python package.")
+
+(defcustom pdj:py-upload-to-pypi-command "twine upload"
+  "Command used to upload a distribution file to PyPI")
+
+(defcustom pdj:py-dist-dir "dist/"
+  "Directory where distribution packages are created.")
+
+
 (defun pdj:py-reset-customvars ()
   "Returns custom var to theirs defalut values."
 
@@ -43,7 +53,8 @@
   (setq pdj:py-debug-buffer-name "py-debug")
   (setq pdj:py-autopep8 nil)
   (setq pdj:py-custom-keywords
-	'(("async def\\|async for\\|await" . font-lock-keyword-face))))
+	'(("async def\\|async for\\|await\\|async with" .
+	   font-lock-keyword-face))))
 
 
 (defun pdj:py-set-test-command ()
@@ -84,8 +95,8 @@
 (defun pdj:py-pip-install (what)
   "Installs `what' using pip"
 
-  (pdj:execute-on-project-directory
-   'pdj:run-in-term (concat pdj:py-pip-command " install " what) "bootstrap"))
+   (pdj:run-in-term-on-project-directory
+    (concat pdj:py-pip-command " install " what) "py-bootstrap-pip"))
 
 (defun pdj:py-install-requirements ()
   "Install the dependencies of a project."
@@ -102,12 +113,19 @@
   (defvar pdj:py--instal-server-cmd
     (mapconcat 'identity jedi:install-server--command " "))
 
+  (pdj:add-project-dir-to-python-path)
+  (pdj:py-venv-hooks)
+
   (deferred:$
     (deferred:next
-      (lambda () (pdj:run-in-term-on-project-directory
-		  pdj:py--instal-server-cmd "bootstrap")))
+      (lambda ()
+	(pdj:py-install-requirements)))
+
     (deferred:nextc it
-      (lambda () (pdj:py-install-requirements)))))
+      (lambda ()
+	(pdj:run-in-term-on-project-directory pdj:py--instal-server-cmd
+					      "py-bootstrap")))))
+
 
 (defun pdj:py-package ()
   "The python package for the current buffer"
@@ -319,48 +337,46 @@
 
   (interactive)
 
-  (defvar pdj:--dist-dir nil)
-  (setq pdj:--dist-dir (concat pdj:project-directory "dist/"))
-  (message pdj:--dist-dir)
-  (defvar pdj:--package-command "python setup.py sdist")
-  (defvar pdj:--upload-command "twine upload")
-
+  ;; here will the the upload to pypi command plus the file name
   (defvar pdj:--upload-file-command nil)
-  ;; We need to know what files were in the directory before
-  ;; the new package was created so we upload the right package
-  (defvar pdj:--old-package-files nil)
-  (defvar pdj:--new-package-files nil)
+  ;; the package that will be created
   (defvar pdj:--new-package-file nil)
-
+  ;; buffer output for create package. Used to know the package name.
+  (defvar pdj:--buf-out nil)
   (defvar pdj:--packaging-buffer-name "Packaging")
 
-  ;; files before the package creation
-  (setq pdj:--old-package-files (directory-files pdj:--dist-dir))
+  ;; sentinel to the create package process.
+  ;; when the process finishes without errors upload the file to pypi
+  (defun pdj:--upload-package (process event)
+    (if (equal event "finished\n")
+	(progn
+	  (setq pdj:--buf-out (buffer-substring-no-properties 1 (buffer-size)))
+	  (string-match "creating \\(.*/\\)"
+			(buffer-substring-no-properties 1 (buffer-size)))
+	  ;; the file name like myproject-0.1.tar.gz
+	  (setq pdj:--new-package-file
+		(concat (replace-regexp-in-string " " "" (match-string 1))
+			".tar.gz"))
+	  ;; file name like dist/myproject-0.1.tar.gz
+	  (setq pdj:--new-package-file
+		(concat pdj:py-dist-dir pdj:--new-package-file))
+
+	  ;; upload command like twine upload dist/myproject-0.1.tar.gz
+	  (setq pdj:--upload-file-command
+		(concat pdj:py-upload-to-pypi-command
+			(concat " " pdj:--new-package-file)))
+
+	  (pdj:run-in-term-on-project-directory pdj:--upload-file-command
+	  					pdj:--packaging-buffer-name)
+	  (setq pdj:--new-package-file nil))))
 
   ;; creating the package
-  (pdj:run-in-term-on-project-directory pdj:--package-command
+  (pdj:run-in-term-on-project-directory pdj:py-package-command
 					pdj:--packaging-buffer-name)
-  ;; we wait here so the async process in the first term has time
-  ;; to finish.
-  (run-with-timer
-   0.5 nil
-   (lambda ()
-     ;; files after the package creation
-     (setq pdj:--new-package-files (directory-files pdj:--dist-dir))
-     ;; new file
-     (setq pdj:--new-package-file
-	   (car
-	    (set-difference pdj:--old-package-files pdj:--new-package-files)))
 
-     ;; command to upload the package
-     (setq pdj:--upload-file-command
-	   (concat pdj:--upload-command
-		   (concat " " (concat pdj:--dist-dir
-				       pdj:--new-package-file))))
+  (set-process-sentinel (get-process pdj:--packaging-buffer-name)
+			'pdj:--upload-package))
 
-     (pdj:run-in-term-on-project-directory
-      pdj:--upload-file-command
-      pdj:--packaging-buffer-name))))
 
 ;; :enable for test or debug suite menu.
 (defun pdj:--is-test-suite ()

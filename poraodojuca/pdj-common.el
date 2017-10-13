@@ -70,6 +70,20 @@
   (local-set-key (kbd "C-c v") 'pdj:check-coverage))
 
 
+(defun pdj:load-custom-commands ()
+  "Loads a file with custom commands for a project."
+
+  (interactive)
+  (hack-local-variables)
+
+  (if pdj:project-directory
+      (progn
+	(defvar pdj--custom-file (concat pdj:project-directory
+					 "custom-commands.el"))
+	(if (and pdj:custom-commands (file-exists-p pdj--custom-file))
+	    (load-file pdj--custom-file)))))
+
+
 (defun pdj:multi-term-hooks ()
   "Customizations to multi-term.
   * Sets `multi-term-program' to /usr/bin/zsh

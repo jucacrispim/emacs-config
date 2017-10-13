@@ -132,6 +132,7 @@
   (add-hook 'term-mode-hook 'pdj:multi-term-hooks)
   (add-to-list 'auto-mode-alist '("\\.migration\\'" . sql-mode))
   (add-to-list 'auto-mode-alist '("toxicbuild.conf\\'" . python-mode))
+  (add-to-list 'auto-mode-alist '("\\.feature\\'" . pdj:feature-mode))
   ;; enable which-function-mode
   (which-function-mode t)
   ;; displaying useless whitespaces

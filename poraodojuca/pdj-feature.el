@@ -63,6 +63,7 @@
   (local-set-key (kbd "C-c m") 'pdj:feature-run-test-file)
   (local-set-key (kbd "C-c p") 'pdj:feature-run-test-file))
 
+
 (define-derived-mode pdj:feature-mode python-mode "pdj:feature"
   "Major mode for editing feature files used in behave test tool."
   (setq-local  font-lock-defaults '(pdj:feature-keywords))

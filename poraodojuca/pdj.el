@@ -27,6 +27,7 @@
   (require 'pdj-elisp)
   (require 'pdj-js)
   (require 'pdj-project)
+  (require 'pdj-feature)
   (pdj:common-setup)
   (pdj:py-setup)
   (pdj:el-setup)

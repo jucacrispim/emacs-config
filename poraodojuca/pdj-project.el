@@ -107,6 +107,7 @@ listed in a requirements file using pip."
   (defvar pdj:prj--test-command nil)
   (defvar pdj:prj--coverage-command nil)
   (defvar pdj:prj--py-autopep8 nil)
+  (defvar pdj:prj--custom-commands nil)
   (defvar pdj:prj--template-vars nil)
   (defvar pdj:prj--dir-locals-file nil)
   (defvar pdj:prj--py-main-package-path nil)
@@ -125,6 +126,8 @@ listed in a requirements file using pip."
 				   "Coverage command"
 				   "sh ./build-scripts/check_coverage.sh"))
   (setq pdj:prj--py-autopep8 (symbol-name (y-or-n-p "Use autopep8?")))
+  (setq pdj:prj--custom-commands (symbol-name
+				  (y-or-n-p "Use custom commands?")))
 
   (setq pdj:prj--template-vars
 	`(("{{PROJECT-DIRECTORY}}" ,pdj:prj--project-dir)
@@ -135,6 +138,10 @@ listed in a requirements file using pip."
 
   (if pdj:prj--py-autopep8
       (push `("{{PY-AUTOPEP8}}" ,pdj:prj--py-autopep8)
+	    pdj:prj--template-vars))
+
+  (if pdj:prj--custom-commands
+      (push `("{{CUSTOM-COMMANDS}}" ,pdj:prj--custom-commands)
 	    pdj:prj--template-vars))
 
   ;; now we have everthing needed, lets start.
@@ -167,9 +174,13 @@ listed in a requirements file using pip."
   (customize-save-variable
    'safe-local-variable-values safe-local-variable-values)
 
-  ;; removing autopep8 stuff if it was not setted.
+  ;; removing stuff that was not setted.
   (set-buffer (find-file-noselect pdj:prj--dir-locals-file))
   (while (re-search-forward "(pdj:py-autopep8 . \"nil\")" nil t)
+    (replace-match ""))
+
+  (set-buffer (find-file-noselect pdj:prj--dir-locals-file))
+  (while (re-search-forward "(pdj:custom-commands . \"nil\")" nil t)
     (replace-match ""))
 
   ;; creating the setup.py file

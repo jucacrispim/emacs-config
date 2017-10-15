@@ -215,8 +215,8 @@ listed in a requirements file using pip."
   (interactive)
 
   ;; new Development menu
-  (define-key global-map [menu-bar pdj-prj]
-    (cons "Project" (make-sparse-keymap "Project")))
+  (define-key-after global-map [menu-bar pdj-prj]
+    (cons "Project" (make-sparse-keymap "Project")) 'Tools)
 
   ;; add projects
   (defvar menu-bar-pdj-prj-add (make-sparse-keymap "Add"))

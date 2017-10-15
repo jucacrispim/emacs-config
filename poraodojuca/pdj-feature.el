@@ -17,6 +17,9 @@
 
   "Keywords for behave's feature file.")
 
+(defvar pdj:feature-default-display (getenv "DISPLAY")
+  "Default display for X server")
+
 
 (defun pdj:feature-file ()
   "The path for the current file"
@@ -37,6 +40,52 @@
 				     (concat " " pdj--rel-dir))))
     (pdj:execute-on-project-directory
      'pdj:run-in-term pdj--behave-command pdj:behave-buffer-name)))
+
+(defun pdj:feature--start-xvfb ()
+  "Starts a Xvfb server"
+
+  (defvar pdj:feature--xvfb-start-command
+    "Xvfb :99  -ac -screen 0, 1920x1200x24 &")
+  (shell-command pdj:feature--xvfb-start-command)
+  (setenv "DISPLAY" ":99"))
+
+(defun pdj:feature--kill-xvfb (process event)
+  "Kills all Xvfb processes. Meat to be used with a process sentinel."
+
+  (defvar pdj:feature--xvfb-stop-command "killall Xvfb")
+
+  (if (equal event "finished\n")
+      (progn
+	(let ((kill-buffer-query-functions
+	       (delq 'process-kill-buffer-query-function
+		     kill-buffer-query-functions)))
+	  (kill-buffer "*Async Shell Command*")
+	  (setenv "DISPLAY" pdj:feature-default-display)
+	  (shell-command pdj:feature--xvfb-stop-command)))))
+
+(defun pdj:feature-run-test-file-xvfb ()
+  "Starts a Xvfb server before the tests and kills when the tests are done."
+
+  (interactive)
+
+  (pdj:feature--start-xvfb)
+
+  (let ((multi-term-close-on-finish t))
+    (pdj:feature-run-test-file)
+    (set-process-sentinel (get-process pdj:behave-buffer-name)
+			  'pdj:feature--kill-xvfb)))
+
+(defun pdj:feature-run-test-dir-xvfb ()
+  "Starts a Xvfb server before the tests and kills when the tests are done."
+
+  (interactive)
+
+  (pdj:feature--start-xvfb)
+
+  (let ((multi-term-close-on-finish t))
+    (pdj:feature-run-test-dir)
+    (set-process-sentinel (get-process pdj:behave-buffer-name)
+			  'pdj:feature--kill-xvfb)))
 
 
 (defun pdj:feature-run-test-dir ()
@@ -60,8 +109,10 @@
   (pdj:py-deactivate)
   (pdj:py-venv-hooks)
   (remove-hook 'before-save-hook 'py-autopep8-buffer)
-  (local-set-key (kbd "C-c m") 'pdj:feature-run-test-file)
-  (local-set-key (kbd "C-c p") 'pdj:feature-run-test-file))
+  (local-set-key (kbd "C-c m") 'pdj:feature-run-test-file-xvfb)
+  (local-set-key (kbd "C-c p") 'pdj:feature-run-test-dir-xvfb)
+  (local-set-key (kbd "C-c n") 'pdj:feature-run-test-file)
+  (local-set-key (kbd "C-c o") 'pdj:feature-run-test-dir))
 
 
 (define-derived-mode pdj:feature-mode python-mode "pdj:feature"

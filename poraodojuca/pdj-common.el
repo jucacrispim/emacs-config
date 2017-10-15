@@ -130,6 +130,7 @@
   (pdj:add-comments-menu-item)
   (add-hook 'write-file-hooks 'pdj:delete-trailing-whitespace)
   (add-hook 'term-mode-hook 'pdj:multi-term-hooks)
+  (add-hook 'prog-mode-hook 'pdj:load-custom-commands)
   (add-to-list 'auto-mode-alist '("\\.migration\\'" . sql-mode))
   (add-to-list 'auto-mode-alist '("toxicbuild.conf\\'" . python-mode))
   (add-to-list 'auto-mode-alist '("\\.feature\\'" . pdj:feature-mode))

@@ -8,6 +8,9 @@
 (require 'pdj-utils)
 
 
+(defvar pdj:--custom-already-loaded '())
+
+
 ;; Global key bindings
 
 (defun pdj:common-keyboard-hooks()
@@ -70,6 +73,14 @@
   (local-set-key (kbd "C-c v") 'pdj:check-coverage))
 
 
+(defun pdj:--is-custom-loaded ()
+
+  (interactive)
+  (hack-local-variables)
+
+  (find pdj:project-directory pdj:--custom-already-loaded))
+
+
 (defun pdj:load-custom-commands ()
   "Loads a file with custom commands for a project."
 
@@ -78,10 +89,15 @@
 
   (if pdj:project-directory
       (progn
-	(defvar pdj--custom-file (concat pdj:project-directory
+	(unless (pdj:--is-custom-loaded)
+	  (defvar pdj--custom-file (concat pdj:project-directory
 					 "custom-commands.el"))
-	(if (and pdj:custom-commands (file-exists-p pdj--custom-file))
-	    (load-file pdj--custom-file)))))
+	  (if (and pdj:custom-commands (file-exists-p pdj--custom-file))
+	      (progn
+		(setq pdj:--custom-already-loaded
+		      (append (list pdj:project-directory)
+			      pdj:--custom-already-loaded))
+		(load-file pdj--custom-file)))))))
 
 
 (defun pdj:multi-term-hooks ()

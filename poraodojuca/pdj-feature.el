@@ -20,6 +20,9 @@
 (defvar pdj:feature-default-display (getenv "DISPLAY")
   "Default display for X server")
 
+;; key map for pdj:feature-mode
+(defvar pdj:feature-mode-map (make-sparse-keymap) "Keymap for pdj:feature-mode")
+
 
 (defun pdj:feature-file ()
   "The path for the current file"
@@ -102,6 +105,30 @@
      'pdj:run-in-term pdj--behave-command pdj:behave-buffer-name)))
 
 
+(defun pdj:feature-create-menu ()
+
+    (interactive)
+  ;; removing python menu
+  (define-key python-mode-map [menu-bar pdj-python] nil)
+
+  ;; new feature menu
+  (define-key pdj:feature-mode-map [menu-bar pdj-feature]
+    (cons "Feature Mode" (make-sparse-keymap "Feature Mode")))
+
+  (define-key pdj:feature-mode-map [menu-bar pdj-feature test-file]
+    '(menu-item "Run tests in file" pdj:feature-run-test-file))
+
+  (define-key pdj:feature-mode-map [menu-bar pdj-feature test-file-xvfb]
+    '(menu-item "Run tests in file (xvfb)" pdj:feature-run-test-file-xvfb))
+
+  (define-key pdj:feature-mode-map [menu-bar pdj-feature test-dir]
+    '(menu-item "Run tests in dir" pdj:feature-run-test-dir))
+
+  (define-key pdj:feature-mode-map [menu-bar pdj-feature test-dir-xvfb]
+    '(menu-item "Run tests in dir (xvfb)" pdj:feature-run-test-dir-xvfb)))
+
+
+
 (defun pdj:feature-post-py-hooks ()
 
   ;; we need to set this here because we want to run it
@@ -112,13 +139,15 @@
   (local-set-key (kbd "C-c m") 'pdj:feature-run-test-file-xvfb)
   (local-set-key (kbd "C-c p") 'pdj:feature-run-test-dir-xvfb)
   (local-set-key (kbd "C-c n") 'pdj:feature-run-test-file)
-  (local-set-key (kbd "C-c o") 'pdj:feature-run-test-dir))
+  (local-set-key (kbd "C-c o") 'pdj:feature-run-test-dir)
+  (pdj:feature-create-menu))
 
 
 (define-derived-mode pdj:feature-mode python-mode "pdj:feature"
   "Major mode for editing feature files used in behave test tool."
   (setq-local  font-lock-defaults '(pdj:feature-keywords))
-  (add-hook 'pdj:feature-mode-hook 'pdj:feature-post-py-hooks))
+  (add-hook 'pdj:feature-mode-hook 'pdj:feature-post-py-hooks)
+  (use-local-map pdj:feature-mode-map))
 
 
 (provide 'pdj-feature)

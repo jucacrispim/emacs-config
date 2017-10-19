@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+#-*- coding: utf-8 -*-
+
+import subprocess
+import sys
+
+PROCESS_CMD = 'ps aux | grep emacs | grep -v grep | grep -v clemacs'
+EMACSCLIENT = '/usr/bin/emacsclient -n'
+EMACS = '/usr/bin/emacs'
+
+
+def has_emacs_process():
+    try:
+        out = subprocess.check_output(PROCESS_CMD, shell=True).decode()
+    except subprocess.CalledProcessError:
+        out = ''
+    processes = [p for p in out.split('\n')if p]
+    return len(processes) > 0
+
+def open_with_emacs(fpath):
+    cmd = '{} {}'.format(EMACS, fpath)
+    subprocess.check_output(cmd, shell=True)
+
+
+def open_with_emacsclient(fpath):
+    cmd = '{} {}'.format(EMACSCLIENT, fpath)
+    subprocess.check_output(cmd, shell=True)
+
+
+def get_args():
+    if len(sys.argv) > 1:
+        fpath = sys.argv[1]
+    else:
+        fpath = ''
+
+    return fpath
+
+def main():
+    fpath = get_args()
+
+    if not fpath:
+        print('you must pass a file path')
+        sys.exit(1)
+
+    if has_emacs_process():
+        open_with_emacsclient(fpath)
+    else:
+        open_with_emacs(fpath)
+
+
+if __name__ == '__main__':
+    main()

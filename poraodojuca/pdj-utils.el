@@ -6,6 +6,9 @@
 (defcustom pdj:kill-all-buffers-hooks (list)
   "Hooks to be used when killing all buffers.")
 
+(defcustom pdj:multi-term-switch-to-buffer t
+  "Indicates if we should switch to the terminal buffer")
+
 
 (defun pdj:multi-term (&optional dedicated)
   "Create new term buffer.
@@ -16,12 +19,14 @@ The difference from this function to multi-term's function is that here we pop-t
   (let (term-buffer)
     ;; Set buffer.
     (setq term-buffer (multi-term-get-buffer nil dedicated))
-    (setq multi-term-buffer-list (nconc multi-term-buffer-list (list term-buffer)))
+    (setq multi-term-buffer-list (nconc multi-term-buffer-list
+					(list term-buffer)))
     (set-buffer term-buffer)
     ;; Internal handle for `multi-term' buffer.
     (multi-term-internal)
     ;; Switch buffer
-    (pop-to-buffer term-buffer)))
+    (when pdj:multi-term-switch-to-buffer
+      (pop-to-buffer term-buffer))))
 
 
 (defun pdj:run-in-term (command &optional term-name)

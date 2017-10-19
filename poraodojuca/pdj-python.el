@@ -29,7 +29,8 @@
 
   "Custom keywords for Python language. Default are for Python3.5 async stuff")
 
-(defcustom pdj:py-pip-command "pip" "Command used to install python packages")
+(defcustom pdj:py-pip-command "/usr/bin/pip"
+  "Command used to install python packages")
 
 (defcustom pdj:py-requirements-file "requirements.txt"
   "File that contains a list of dependencies to install with pip.")

@@ -15,6 +15,9 @@
 (defcustom pdj:py-test-command "python setup.py test -q"
   "Command to run Python tests")
 
+(defcustom pdj:py-test-suite-prefix "--test-suite="
+  "Prefix to use when running a specific test suite.")
+
 (defcustom pdj:venv-name nil
   "Virtualenv name to be used in the buffer. Customize this via .dir-locals.el")
 
@@ -25,7 +28,7 @@
   "Indicates if we should enable autopep8 on save")
 
 (defcustom pdj:py-custom-keywords
-  '(("async def\\|async for\\|await" . font-lock-keyword-face))
+  '(("async def\\|async for\\|await " . font-lock-keyword-face))
 
   "Custom keywords for Python language. Default are for Python3.5 async stuff")
 
@@ -50,6 +53,7 @@
   "Returns custom var to theirs defalut values."
 
   (setq pdj:py-test-command "python setup.py test -q")
+  (setq pdj:py-test-suite-prefix "--test-suite=")
   (setq pdj:venv-name nil)
   (setq pdj:py-debug-buffer-name "py-debug")
   (setq pdj:py-autopep8 nil)
@@ -182,7 +186,8 @@
 
   (interactive)
 
-  (setq python-shell-interpreter "ipython")
+  (setq python-shell-interpreter "ipython"
+	python-shell-interpreter-args "--simple-prompt --pprint")
 
   (pdj:execute-on-project-directory
    'run-python python-shell-interpreter nil nil))
@@ -213,9 +218,12 @@
 
   (defvar pdj--debug-command)
 
+  (hack-local-variables)
+
   ;; command to debug one specific method
   (setq pdj--debug-command pdj:py-test-command)
-  (setq pdj--debug-command (concat (concat pdj--debug-command " --test-suite=")
+  (setq pdj--debug-command (concat (concat pdj--debug-command
+					   " " pdj:py-test-suite-prefix)
 				   (pdj:py-test-suite-under-cursor)))
 
   (if insert-ipdb
@@ -241,12 +249,15 @@
 
   (defvar pdj--test-command)
 
+  (hack-local-variables)
+
   (if pdj:test-command
       (let ((pdj--test-command pdj:test-command))
 	(unless (equal test-suite nil)
 	  (setq pdj--test-command (concat
-				   pdj--test-command
-				   (concat " --test-suite=" test-suite))))
+				   pdj--test-command " "
+				   (concat pdj:py-test-suite-prefix
+					   test-suite))))
 
 	(pdj:execute-on-project-directory
 	 'compile pdj--test-command))

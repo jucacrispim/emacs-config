@@ -162,6 +162,7 @@ string from the command process."
     (mapc 'kill-buffer (dolist (buffer bufferlist buffers2kill)
 			 (unless (equal buffer '*scratch*)
 			   (setq buffers2kill (cons buffer buffers2kill)))))
+    (setq pdj:--custom-already-loaded '())
     (display-splash-screen)))
 
 (defun pdj:ask (prompt &optional default)

@@ -15,3 +15,5 @@ eshell/
 request/
 /smex-items
 url/
+/tramp
+node_modules/

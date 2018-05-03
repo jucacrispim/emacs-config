@@ -184,15 +184,20 @@ listed in a requirements file using pip."
     (replace-match ""))
 
   ;; creating the setup.py file
-  (pdj:prj-write-setup-py pdj:prj--template-vars pdj:prj--project-dir)
+  (unless (file-exists-p (concat pdj:prj--project-dir "setup.py"))
+    (pdj:prj-write-setup-py pdj:prj--template-vars pdj:prj--project-dir))
+
 
   ;; creating readme
   (pdj:prj-create-readme-file "My awesome Python project"
 			      pdj:prj--project-dir)
 
   ;; creating requirements
-  (pdj:prj-create-py-requirements-file pdj:prj--requirements-file
-				       pdj:prj--project-dir)
+  (unless (file-exists-p
+	   (concat pdj:prj--project-dir pdj:prj--requirements-file))
+    (pdj:prj-create-py-requirements-file pdj:prj--requirements-file
+					 pdj:prj--project-dir))
+
 
   ;; creating the virtualenv
   (unless (member pdj:prj--venv-name (venv-get-candidates))
@@ -201,7 +206,10 @@ listed in a requirements file using pip."
   (venv-workon pdj:prj--venv-name)
   ;; installing the requirements of the project
   (setq pdj:py-requirements-file pdj:prj--requirements-file)
-  (setq pdj:project-directory pdj:prj--project-dir)
+  (hack-local-variables)
+  (unless (boundp 'pdj:project-directory)
+    (setq pdj:project-directory pdj:prj--project-dir))
+
   (pdj:py-bootstrap))
 
 

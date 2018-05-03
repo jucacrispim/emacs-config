@@ -44,7 +44,8 @@
     (sit-for 1)
 
     (setq msg (concat "\n\n" "Blessings, my son. Welcome to the Emacs church."
-		      "\nYou ought to acquire some canons. Be patient.\n\n"))
+		      "\nThou shalt to acquire knowledge through some canons."
+		      " Be patient.\n\n"))
     (pdj:print msg)
 
     (add-to-list 'package-archives
@@ -62,6 +63,9 @@
     (pdj:install-if-needed 'py-autopep8)
     (pdj:install-if-needed 'flycheck)
     (pdj:install-if-needed 'magit)
+    (pdj:install-if-needed 'js2-mode)
+    (pdj:install-if-needed 'tern)
+    (pdj:install-if-needed 'tern-auto-complete)
     (pdj:install-if-needed 'buffer-move)
 
     (pdj:print "\nAll canons acquired.")

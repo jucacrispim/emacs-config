@@ -3,6 +3,7 @@
 (require 'tern)
 (require 'js2-mode)
 (require 'tern-auto-complete)
+(require 'jasmacs)
 
 
 
@@ -36,11 +37,6 @@
       (setq tern-project-dir pdj:project-directory)))
 
 
-(defun pdj:js-keyboard-hooks ()
-
-  (local-set-key (kbd "C-c p") 'pdj:js-jasmine-run-all-tests))
-
-
 (defun pdj:js-setup ()
   "Setup for js code
 
@@ -48,6 +44,7 @@
   * Enables auto-complete-mode and runs tern-ac-setup
   * Sets the custom faces
   * sets tern related sutff
+  * Runs jasmacs:setup
   * Sets `js-indent-level' to 2"
 
 
@@ -59,8 +56,8 @@
 	      (setq js-indent-level 2)
 	      (tern-mode t)
 	      (auto-complete-mode t)
-	      (pdj:js-keyboard-hooks)
-	      (tern-ac-setup))))
+	      (tern-ac-setup)
+	      (jasmacs:setup))))
 
 
 (provide 'pdj-js)

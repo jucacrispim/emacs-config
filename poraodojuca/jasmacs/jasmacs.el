@@ -93,3 +93,36 @@ in your project root dir. May be customized via .dir-locals.el too")
   (message (concat "Starting Jasmacs with" jasmacs:--start-server-command))
   (deferred:$
     (jasmacs:--run-in-py-env jasmacs:--start-server-command)))
+
+
+(defun jasmacs:install-if-needed-and-start ()
+  (if (file-exists-p (concat jasmacs:environment-dir "/"
+			     jasmacs:environment-name))
+      (lambda ()
+	(deferred:$
+	  (jasmacs:install-server)
+
+	  (deferred:nextc it
+	    (jasmacs:start-server))))
+    (jasmacs:start-server)))
+
+(defun jasmacs:tests-url (&optional rest)
+
+  (setq jasmacs:--tests-url (concat "http://localhost:" jasmacs:server-port))
+  (when rest
+    (setq jasmacs:--tests-url (concat "?" rest))))
+
+
+(defun jasmacs:run-all-tests ()
+  (xwidget-webkit-browse-url (jasmacs:tests-url)))
+
+
+(defun jasmacs:keyboard-hooks ()
+  (local-set-key (kbd "C-c p") 'jasmacs:run-all-tests))
+
+(defun jasmacs:setup ()
+  (jasmacs:install-if-needed-and-start)
+  (jasmacs:keyboard-hooks))
+
+
+(provide 'jasmacs)

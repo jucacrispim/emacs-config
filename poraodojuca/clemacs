@@ -5,8 +5,8 @@ import subprocess
 import sys
 
 PROCESS_CMD = 'ps aux | grep emacs | grep -v grep | grep -v clemacs'
-EMACSCLIENT = '/usr/bin/emacsclient -n'
-EMACS = '/usr/bin/emacs'
+EMACSCLIENT = '/usr/local/bin/emacsclient -n'
+EMACS = '/usr/local/bin/emacs'
 
 
 def has_emacs_process():

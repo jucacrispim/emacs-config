@@ -17,3 +17,6 @@ request/
 url/
 /tramp
 node_modules/
+__pycache__/
+__pycache__/
+*.pyc

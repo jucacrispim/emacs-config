@@ -1,0 +1,3 @@
+recursive-include jasmacs/ *
+
+recursive-exclude jasmacs/ *~

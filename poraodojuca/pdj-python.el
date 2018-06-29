@@ -605,7 +605,6 @@
   (add-hook 'python-mode-hook 'flycheck-mode)
   (add-to-list 'flycheck-disabled-checkers 'python-pylint))
 
-
 (defun pdj:py-deactivate-flycheck-hooks ()
   "Removes `python-pylint' from the `flycheck-disabled-checkers'."
 
@@ -641,7 +640,10 @@
   * pdj:py-keyboard-hooks
   * pdj:py-flycheck-hooks
   * pdj:py-ac-hooks
-  * pdj:radon-hooks"
+  * pdj:radon-hooks
+  * pdj:py-create-menu
+  * pdj:py-add-custom-keywords
+  * pdj:enable-autopep8"
 
   (pdj:py-venv-hooks)
   (pdj:py-jedi-hooks)

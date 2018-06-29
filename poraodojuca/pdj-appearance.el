@@ -31,7 +31,7 @@
   (tool-bar-mode -1)
   (setq line-number-mode t)
   (setq column-number-mode t)
-  (set-default-font "-unknown-Inconsolata-normal-normal-normal-*-*-*-*-*-m-0-iso10646-1")
+  (set-frame-font "Inconsolata 12" nil t)
   ;; (run-with-timer 0.01 nil 'color-theme-poraodojuca)
   (color-theme-poraodojuca)
   (if pdj:fullscreen (toggle-fullscreen)))

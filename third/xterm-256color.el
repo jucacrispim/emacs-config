@@ -557,7 +557,7 @@ color is not the default color."
         (term-emulate-terminal proc str)))))
 
 ;; override the default setting
-(setq term-scroll-to-bottom-on-output t)
+;; (setq term-scroll-to-bottom-on-output t)
 
-(provide 'xterm-256color)
+;; (provide 'xterm-256color)
 ;;; xterm-256color ends here

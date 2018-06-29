@@ -1,7 +1,7 @@
 (require 'color-theme)
 (color-theme-initialize)
 
-(require 'xterm-256color)
+;; (require 'xterm-256color)
 
 (defun color-theme-poraodojuca()
 

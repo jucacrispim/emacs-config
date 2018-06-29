@@ -33,6 +33,9 @@
   (pdj:el-setup)
   (pdj:js-setup)
   (pdj:prj-setup)
+  ;; doing it by last so everything we do in the custom-commnd.el
+  ;; overwrites the default stuff.
+  (add-hook 'prog-mode-hook 'pdj:load-custom-commands)
 
   (add-to-list 'pdj:kill-all-buffers-hooks 'pdj:py-deactivate))
 

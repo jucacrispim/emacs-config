@@ -140,13 +140,18 @@
     '(menu-item "--") 'uncomment-region))
 
 
+(defun pdj:compilation-hooks ()
+  "Sets the compilation buffer to follow output"
+  (setq compilation-scroll-output t))
+
+
 (defun pdj:common-setup ()
   (pdj:common-keyboard-hooks)
   (pdj:ac-common-hooks)
   (pdj:add-comments-menu-item)
+  (pdj:compilation-hooks)
   (add-hook 'write-file-hooks 'pdj:delete-trailing-whitespace)
   (add-hook 'term-mode-hook 'pdj:multi-term-hooks)
-  (add-hook 'prog-mode-hook 'pdj:load-custom-commands)
   (add-to-list 'auto-mode-alist '("\\.migration\\'" . sql-mode))
   (add-to-list 'auto-mode-alist '("toxicbuild.conf\\'" . python-mode))
   (add-to-list 'auto-mode-alist '("\\.feature\\'" . pdj:feature-mode))

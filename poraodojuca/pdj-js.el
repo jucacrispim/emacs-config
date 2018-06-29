@@ -17,12 +17,28 @@
 
   "Command to start tern server. A list with bin path and arguments")
 
+(defcustom pdj:js-jasmine-url "http://localhost:2233/"
+
+  "URL where the jasmine test server listens")
+
+
+(defun pdj:js-jasmine-run-all-tests ()
+
+  (interactive)
+
+  (xwidget-webkit-browse-url pdj:js-jasmine-url))
+
 (defun pdj:js-set-tern-dir ()
   "Sets the tern project dir."
 
   (hack-local-variables)
   (if (pdj:project-directory)
       (setq tern-project-dir pdj:project-directory)))
+
+
+(defun pdj:js-keyboard-hooks ()
+
+  (local-set-key (kbd "C-c p") 'pdj:js-jasmine-run-all-tests))
 
 
 (defun pdj:js-setup ()
@@ -43,6 +59,7 @@
 	      (setq js-indent-level 2)
 	      (tern-mode t)
 	      (auto-complete-mode t)
+	      (pdj:js-keyboard-hooks)
 	      (tern-ac-setup))))
 
 

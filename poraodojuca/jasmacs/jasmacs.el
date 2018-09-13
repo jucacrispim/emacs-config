@@ -42,22 +42,24 @@ in your project root dir. May be customized via .dir-locals.el too")
     (deferred:next
       (let ((venv-location jasmacs:environment-dir))
 	(setq jasmacs:--orig-venv-name venv-current-name)
-	(pdj:venv-mkvirtualenv jasmacs:py-exec jasmacs:environment-name)
-	(if jasmacs:--orig-venv-name
-	    (venv-workon jasmacs:--orig-venv-name)
-	  (venv-deactivate))))))
+	(pdj:venv-mkvirtualenv jasmacs:py-exec jasmacs:environment-name))
+      (if jasmacs:--orig-venv-name
+	  (venv-workon jasmacs:--orig-venv-name)
+	(venv-deactivate)))))
 
 (defun jasmacs:--run-in-py-env (cmd)
   (deferred:$
     (deferred:next
-      (let ((venv-location jasmacs:environment-dir))
+      (unless (get-buffer-process "*jasmacs*")
+	(let ((venv-location jasmacs:environment-dir))
 	(setq jasmacs:--orig-venv-name venv-current-name)
 	(venv-workon jasmacs:environment-name)
-	(let ((pdj:multi-term-switch-to-buffer nil))
-	  (pdj:run-in-term cmd jasmacs:buffer-name))
-	(if jasmacs:--orig-venv-name
-	    (venv-workon jasmacs:--orig-venv-name)
-	  (venv-deactivate))))))
+	(setq pdj:multi-term-switch-to-buffer nil)
+	(pdj:run-in-term-on-project-directory cmd jasmacs:buffer-name)
+	(setq pdj:multi-term-switch-to-buffer t))
+      (if jasmacs:--orig-venv-name
+	  (venv-workon jasmacs:--orig-venv-name)
+	(venv-deactivate))))))
 
 (defun jasmacs:install-server ()
   (interactive)
@@ -80,15 +82,19 @@ in your project root dir. May be customized via .dir-locals.el too")
   (defvar jasmacs:--start-server-command)
 
   (if jasmacs:jasmine-yaml-path
-      (setq jasmacs:--jasmine-yaml-path jasmacs:jasmine-yaml-path)
-    (setq jasmacs:--create-py-env (concat pdj:project-directory "jasmine.yml")))
+      (progn ()
+	     (setq jasmacs:--jasmine-yaml-path jasmacs:jasmine-yaml-path)
+	     )
+    (setq jasmacs:--jasmine-yaml-path (concat pdj:project-directory
+					      "jasmine.yml")))
 
   (setq jasmacs:--start-server-command (concat jasmacs:start-server-command
 					       " -c " jasmacs:--jasmine-yaml-path
-					       " -p " jasmacs:server-port))
+					       " -p " jasmacs:server-port
+					       " -r " pdj:project-directory))
   (when jasmacs:use-dark-theme
     (setq jasmacs:--start-server-command (concat jasmacs:--start-server-command
-						 " --dark-theme")))
+						 " -t dark")))
 
   (message (concat "Starting Jasmacs with" jasmacs:--start-server-command))
   (deferred:$
@@ -96,8 +102,8 @@ in your project root dir. May be customized via .dir-locals.el too")
 
 
 (defun jasmacs:install-if-needed-and-start ()
-  (if (file-exists-p (concat jasmacs:environment-dir "/"
-			     jasmacs:environment-name))
+  (if (not (file-exists-p (concat jasmacs:environment-dir "/"
+			     jasmacs:environment-name)))
       (lambda ()
 	(deferred:$
 	  (jasmacs:install-server)
@@ -107,22 +113,27 @@ in your project root dir. May be customized via .dir-locals.el too")
     (jasmacs:start-server)))
 
 (defun jasmacs:tests-url (&optional rest)
+  (interactive)
 
   (setq jasmacs:--tests-url (concat "http://localhost:" jasmacs:server-port))
   (when rest
-    (setq jasmacs:--tests-url (concat "?" rest))))
+    (setq jasmacs:--tests-url (concat "?" rest)))
+  jasmacs:--tests-url)
 
 
 (defun jasmacs:run-all-tests ()
+  (interactive)
+
   (xwidget-webkit-browse-url (jasmacs:tests-url)))
 
 
 (defun jasmacs:keyboard-hooks ()
   (local-set-key (kbd "C-c p") 'jasmacs:run-all-tests))
 
+
 (defun jasmacs:setup ()
-  (jasmacs:install-if-needed-and-start)
-  (jasmacs:keyboard-hooks))
+  (jasmacs:keyboard-hooks)
+  (jasmacs:install-if-needed-and-start))
 
 
 (provide 'jasmacs)

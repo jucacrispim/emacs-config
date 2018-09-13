@@ -16,7 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with jasmacs. If not, see <http://www.gnu.org/licenses/>.
 
+import argparse
 import mimetypes
+import os
 import pkg_resources
 import sys
 import cherrypy
@@ -26,7 +28,6 @@ from jasmine.entry_points import Command
 from jasmine.standalone import JasmineApp
 from jasmine.ci import CIRunner
 
-html_theme = 'clear'
 
 class JasmacsApp(JasmineApp):
 
@@ -44,7 +45,6 @@ class JasmacsCore(Core):
     @classmethod
     def js_package(cls):
         return __package__
-
 
     @classmethod
     def css_files(cls, theme='dark'):
@@ -69,18 +69,20 @@ class JasmacsCore(Core):
         return cls._uniq(js_files)
 
 
-
 class JasmacsConfig(Config):
+    def __init__(self, *args, **kwargs):
+        self.theme = kwargs.pop('theme', 'clear')
+        super().__init__(*args, **kwargs)
 
     def stylesheet_urls(self):
-        global html_theme
 
         jasmine_css = [
             "/__jasmine__/{0}".format(core_css)
-            for core_css in JasmacsCore.css_files(theme=html_theme)]
+            for core_css in JasmacsCore.css_files(theme=self.theme)]
 
         src_css = [
-            "/__src__/{0}".format(css_file) for css_file in self.stylesheets()]
+            "/__src__/{0}".format(css_file)
+            for css_file in self.stylesheets()]
 
         return jasmine_css + src_css
 
@@ -102,12 +104,62 @@ class JasmacsConfig(Config):
         return jasmine_js + src_js + helpers + specs
 
 
-
 class JasmacsCommand(Command):
+
+    def __init__(self, app, ci_runner):
+        self.app = app
+        self.ci_runner = ci_runner
+        self._args = None
+        self.parser = argparse.ArgumentParser(
+            description='Jasmine command line')
+        subcommands = self.parser.add_subparsers(help='commands')
+        server = subcommands.add_parser(
+            'server', help='Jasmine server',
+            description='run a server hosting your Jasmine specs')
+        server.add_argument('-p', '--port', type=int, default=8888,
+                            help='The port of the Jasmine html runner')
+        server.add_argument('-o', '--host', type=str, default='127.0.0.1',
+                            help='The host of the Jasmine html runner')
+        server.add_argument('-c', '--config', type=str,
+                            help='Custom path to jasmine.yml')
+        server.add_argument('-t', '--theme', type=str, default='clear',
+                            help="The theme's name for the html report")
+        server.add_argument('-r', '--root', type=str, default=None,
+                            help="The root dir for the jasmacs server process")
+        server.set_defaults(func=self.server)
+
+        ci = subcommands.add_parser(
+            'ci', help='Jasmine CI',
+            description='execute your specs in a browser')
+        ci.add_argument('-b', '--browser', type=str,
+                        help='The selenium driver to utilize')
+        ci.add_argument('-l', '--logs', action='store_true',
+                        help='Displays browser logs')
+        ci.add_argument('-s', '--seed', type=str,
+                        help='Seed for random spec order')
+        ci.add_argument('-c', '--config', type=str,
+                        help='Custom path to jasmine.yml')
+        ci.set_defaults(func=self.ci)
+
+        init = subcommands.add_parser('init', help='initialize Jasmine',
+                                      description='')
+        init.set_defaults(func=self.init)
+
+    def run(self, argv):
+        args = self.parser.parse_args(argv)
+        self._args = args
+        if args.root:
+            os.chdir(args.root)
+
+        try:
+            args.func(args)
+        except AttributeError:
+            self.parser.print_help()
 
     def _load_config(self, custom_config_path):
         config_file, project_path = self._config_paths(custom_config_path)
-        return JasmacsConfig(config_file, project_path=project_path)
+        return JasmacsConfig(config_file, project_path=project_path,
+                             theme=self._args.theme)
 
 
 class JasmacsFile(object):
@@ -129,15 +181,9 @@ class JasmacsFile(object):
 
 
 def begin():
-    global html_theme
-
-    if '--dark-theme'in sys.argv:
-        html_theme = 'dark'
-        sys.argv.remove('--dark-theme')
 
     cmd = JasmacsCommand(JasmacsApp, CIRunner)
     cmd.run(sys.argv[1:])
-
 
 
 if __name__ == '__main__':

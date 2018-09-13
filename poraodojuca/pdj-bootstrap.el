@@ -48,8 +48,8 @@
 		      " Be patient.\n\n"))
     (pdj:print msg)
 
-    (add-to-list 'package-archives
-    		 '("melpa" . "http://melpa.org/packages/"))
+    ;; (add-to-list 'package-archives
+    ;; 		 '("melpa" . "http://melpa.org/packages/"))
 
     (pdj:print "Fetching index canonice...\n\n")
     (package-refresh-contents)
@@ -58,6 +58,7 @@
     (pdj:install-if-needed 'auto-complete)
     (pdj:install-if-needed 'jedi)
     (pdj:install-if-needed 'yasnippet)
+    (pdj:install-if-needed 'yasnippet-snippets)
     (pdj:install-if-needed 'color-theme)
     (pdj:install-if-needed 'browse-kill-ring)
     (pdj:install-if-needed 'py-autopep8)
@@ -66,6 +67,7 @@
     (pdj:install-if-needed 'js2-mode)
     (pdj:install-if-needed 'tern)
     (pdj:install-if-needed 'tern-auto-complete)
+    (pdj:install-if-needed 'tern-context-coloring)
     (pdj:install-if-needed 'buffer-move)
 
     (pdj:print "\nAll canons acquired.")

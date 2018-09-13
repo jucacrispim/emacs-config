@@ -68,7 +68,10 @@
   (hack-local-variables)
 
   (unless pdj:test-command
-    (setq pdj:test-command pdj:py-test-command)))
+    (setq pdj:test-command pdj:py-test-command))
+
+  (if (boundp 'pdj:test-suite-prefix)
+      (setq pdj:py-test-suite-prefix pdj:test-suite-prefix)))
 
 
 (defun pdj:add-project-dir-to-python-path ()
@@ -151,6 +154,23 @@
 			 pdj--py-package))
   pdj--py-package)
 
+(defun pdj:py-dir ()
+    "The directory for the current buffer"
+
+  (interactive)
+
+  (defvar pdj--rel-dir)
+  (defvar pdj--clean-buffer-name)
+
+  (setq pdj--clean-buffer-name (replace-regexp-in-string "<\.*>" ""
+							 (buffer-name)))
+  (setq pdj--rel-dir (replace-regexp-in-string
+		      pdj:project-directory "" (buffer-file-name)))
+  (setq pdj--rel-dir (replace-regexp-in-string
+			 (concat "/" pdj--clean-buffer-name) ""
+			 pdj--rel-dir))
+  pdj--rel-dir)
+
 
 (defun pdj:py-module ()
   "The python module for the current buffer"
@@ -167,6 +187,22 @@
   pdj--py-module)
 
 
+(defun pdj:py-file ()
+  "Relative path for the file displayed in the current buffer"
+
+  (defvar pdj--rel-dir)
+
+  (setq pdj--rel-dir (replace-regexp-in-string
+		      pdj:project-directory "" (buffer-file-name)))
+  pdj--rel-dir)
+
+
+(defun pdj:pytest-func ()
+  "The test function name formatted for use in pytest cmd line."
+
+  (replace-regexp-in-string "\\." "::" (which-function)))
+
+
 (defun pdj:py-test-suite-under-cursor ()
   "The full qualified name for the test suite under the cursor"
 
@@ -176,7 +212,10 @@
   (save-excursion
     (if (equal (thing-at-point 'line) "\n")
 	(forward-line -1))
-    (setq pdj--test-suite (concat (pdj:py-module) (concat "." (which-function))))
+    (if (string-equal pdj:test-command "pytest")
+	(setq pdj--test-suite (concat (pdj:py-file) "::" (pdj:pytest-func)))
+      (setq pdj--test-suite (concat (pdj:py-module)
+				    (concat "." (which-function)))))
     pdj--test-suite))
 
 
@@ -221,10 +260,13 @@
   (hack-local-variables)
 
   ;; command to debug one specific method
-  (setq pdj--debug-command pdj:py-test-command)
+  (setq pdj--debug-command pdj:test-command)
   (setq pdj--debug-command (concat (concat pdj--debug-command
 					   " " pdj:py-test-suite-prefix)
 				   (pdj:py-test-suite-under-cursor)))
+
+  (if (string-equal pdj:test-command "pytest")
+      (setq pdj--debug-command (concat pdj--debug-command " -s")))
 
   (if insert-ipdb
       (pdj:py-insert-ipdb-at-point))
@@ -277,14 +319,18 @@
 
   (interactive)
 
-  (pdj:py-run-tests (pdj:py-package)))
+  (if (string-equal pdj:test-command "pytest")
+      (pdj:run-tests (pdj:py-dir))
+    (pdj:py-run-tests (pdj:py-package))))
 
 
 (defun pdj:py-run-tests-module ()
   "Run tests for the current buffer."
 
   (interactive)
-  (pdj:py-run-tests (pdj:py-module)))
+  (if (string-equal pdj:test-command "pytest")
+      (pdj:py-run-tests (pdj:py-file))
+    (pdj:py-run-tests (pdj:py-module))))
 
 
 (defun pdj:py-run-test-suite ()

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+#name : insert tag
+# key: <>
+# binding: C-c C-b tag
+# --
+
+<${1:TAG}></$1>

@@ -57,7 +57,8 @@
 	      (tern-mode t)
 	      (auto-complete-mode t)
 	      (tern-ac-setup)
-	      (jasmacs:setup))))
+	      (deferred:$
+		(jasmacs:setup)))))
 
 
 (provide 'pdj-js)

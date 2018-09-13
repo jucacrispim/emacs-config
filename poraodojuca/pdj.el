@@ -28,6 +28,10 @@
   (require 'pdj-js)
   (require 'pdj-project)
   (require 'pdj-feature)
+
+  (add-to-list 'package-archives
+    	       '("melpa" . "http://melpa.org/packages/"))
+
   (pdj:common-setup)
   (pdj:py-setup)
   (pdj:el-setup)

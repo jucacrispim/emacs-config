@@ -33,7 +33,7 @@
   (setq column-number-mode t)
   (set-frame-font "Inconsolata 12" nil t)
   ;; (run-with-timer 0.01 nil 'color-theme-poraodojuca)
-  (color-theme-poraodojuca)
+  (load-theme 'pdj)
   (if pdj:fullscreen (toggle-fullscreen)))
 
 

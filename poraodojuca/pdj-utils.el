@@ -187,3 +187,10 @@ string from the command process."
     (buffer-string)))
 
 (provide 'pdj-utils)
+
+
+(defun pdj:save-no-hooks ()
+  "Saves the current buffer without applying any save hooks"
+
+  (let ((before-save-hook nil))
+    (save-buffer)))

@@ -111,6 +111,7 @@ listed in a requirements file using pip."
   (defvar pdj:prj--template-vars nil)
   (defvar pdj:prj--dir-locals-file nil)
   (defvar pdj:prj--py-main-package-path nil)
+  (defvar pdj:prj--test-suite-prefix nil)
 
   ;; first we ask the info we need.
   (setq pdj:prj--project-name (pdj:ask "Project name"))
@@ -121,7 +122,11 @@ listed in a requirements file using pip."
   (setq pdj:prj--venv-py-version (pdj:ask "Python version" "python3"))
   (setq pdj:prj--requirements-file (pdj:ask
 				   "Requirements file" "requirements.txt"))
-  (setq pdj:prj--test-command (pdj:ask "Test command" "python setup.py test"))
+  (setq pdj:prj--test-command (pdj:ask "Test command" "pytest"))
+  (setq pdj:prj--test-suite-prefix (pdj:ask
+				   "Test suite prefix"
+				   " "))
+
   (setq pdj:prj--coverage-command (pdj:ask
 				   "Coverage command"
 				   "sh ./build-scripts/check_coverage.sh"))
@@ -133,6 +138,7 @@ listed in a requirements file using pip."
 	`(("{{PROJECT-DIRECTORY}}" ,pdj:prj--project-dir)
 	  ("{{VENV-NAME}}" ,pdj:prj--venv-name)
 	  ("{{TEST-COMMAND}}" ,pdj:prj--test-command)
+	  ("{{TEST-SUITE-PREFIX}}" ,pdj:prj--test-suite-prefix)
 	  ("{{PROJECT-NAME}}" ,pdj:prj--project-name)
 	  ("{{COVERAGE-COMMAND}}" ,pdj:prj--coverage-command)))
 
@@ -166,6 +172,8 @@ listed in a requirements file using pip."
   (push `(pdj:coverage-command . ,pdj:prj--coverage-command)
 	safe-local-variable-values)
   (push `(pdj:py-autopep8 . ,pdj:prj--py-autopep8)
+	safe-local-variable-values)
+  (push `(pdj:test-suite-prefix . ,pdj:prj--test-suite-prefix)
 	safe-local-variable-values)
   (put 'safe-local-variable-values 'customized-value
        (list (custom-quote (symbol-value 'safe-local-variable-values))))

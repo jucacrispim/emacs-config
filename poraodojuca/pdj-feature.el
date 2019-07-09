@@ -128,7 +128,6 @@
     '(menu-item "Run tests in dir (xvfb)" pdj:feature-run-test-dir-xvfb)))
 
 
-
 (defun pdj:feature-post-py-hooks ()
 
   ;; we need to set this here because we want to run it
@@ -140,6 +139,7 @@
   (local-set-key (kbd "C-c p") 'pdj:feature-run-test-dir-xvfb)
   (local-set-key (kbd "C-c n") 'pdj:feature-run-test-file)
   (local-set-key (kbd "C-c o") 'pdj:feature-run-test-dir)
+  (local-set-key (kbd "C-x C-s") 'pdj:save-no-hooks)
   (pdj:feature-create-menu))
 
 

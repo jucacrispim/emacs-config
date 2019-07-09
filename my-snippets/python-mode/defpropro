@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+#name : defpropro
+# key: @pr
+# binding: C-c C-b @pr
+# --
+
+@property
+def ${1:PRPNAME}(self):
+    return self._$1

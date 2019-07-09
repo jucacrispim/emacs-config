@@ -28,6 +28,10 @@
   (require 'pdj-js)
   (require 'pdj-project)
   (require 'pdj-feature)
+  (require 'pdj-appearance)
+
+  (if pdj:appearance (pdj:appearance-setup))
+
 
   (add-to-list 'package-archives
     	       '("melpa" . "http://melpa.org/packages/"))
@@ -48,8 +52,6 @@
   "Sets up all stuff needed for pdj's emacs."
 
   (server-start)
-  (require 'pdj-appearance)
-  (if pdj:appearance (pdj:appearance-setup))
 
   (if (pdj:boostrap-is-done)
       (pdj:--do-setup)

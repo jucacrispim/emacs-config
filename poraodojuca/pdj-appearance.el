@@ -1,4 +1,4 @@
-(require 'pdj-color-theme)
+(require 'pdj-theme)
 
 
 (defun toggle-fullscreen ()

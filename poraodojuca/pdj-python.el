@@ -98,6 +98,17 @@
   (remove-hook 'python-mode-hook 'py-autopep8-enable-on-save))
 
 
+(defun pdj:py-set-faces ()
+  "Set face styles for python"
+
+  (add-hook 'python-mode-hook
+	    (lambda ()
+	      (font-lock-add-keywords
+	       nil
+	       '(("^[[:space:]]*\\(@[^(#[:space:]\n]*\\)" 1
+		  'font-lock-type-face))))))
+
+
 ;; Interactive funcs
 
 (defun pdj:py-pip-install (what)
@@ -689,7 +700,9 @@
   * pdj:radon-hooks
   * pdj:py-create-menu
   * pdj:py-add-custom-keywords
+  * pdj:py-set-faces
   * pdj:enable-autopep8"
+
 
   (pdj:py-venv-hooks)
   (pdj:py-jedi-hooks)
@@ -700,6 +713,7 @@
   (pdj:py-set-test-command)
   (pdj:add-project-dir-to-python-path)
   (pdj:py-create-menu)
+  (pdj:py-set-faces)
   (pdj:enable-autopep8)
   (pdj:py-add-custom-keywords))
 

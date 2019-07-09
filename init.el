@@ -23,7 +23,7 @@
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
  '(custom-safe-themes
-   '("62425806baaa46dadc3c52e18efa34ac400716619090625f7dbc0a5e38de1e54" "057aba03c7f3468362612363f1efdf14a0ae01d6859f7f8c54622cc6fe848273" "b294b3145199b9edcbb201db37ab3276aa9dfc17ff6660bb06db71a75ce8fd28" "da8e6e5b286cbcec4a1a99f273a466de34763eefd0e84a41c71543b16cd2efac" "938f120eeda938eef2c36b4cc9609d1ad91b3a3666cd63a4be5b70b739004942" default))
+   '("d5e5ba000f741bcdbc88744402ac162965c4a337c4c41a635240237411923c94" "62425806baaa46dadc3c52e18efa34ac400716619090625f7dbc0a5e38de1e54" "057aba03c7f3468362612363f1efdf14a0ae01d6859f7f8c54622cc6fe848273" "b294b3145199b9edcbb201db37ab3276aa9dfc17ff6660bb06db71a75ce8fd28" "da8e6e5b286cbcec4a1a99f273a466de34763eefd0e84a41c71543b16cd2efac" "938f120eeda938eef2c36b4cc9609d1ad91b3a3666cd63a4be5b70b739004942" default))
  '(package-selected-packages
    '(color-theme-modern dockerfile-mode cython-mode markdown-preview-mode markdown-mode tern-context-coloring yasnippet-snippets browse-kill-ring flycheck-pycheckers pylint yaml-mode js2-mode tern tern-auto-complete yasnippet virtualenvwrapper py-autopep8 magit jedi flycheck buffer-move))
  '(safe-local-variable-values

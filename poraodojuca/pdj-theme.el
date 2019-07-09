@@ -19,10 +19,10 @@
  '(font-lock-comment-face ((t (:weight medium :foreground "#dc0000"))))
  '(font-lock-constant-face ((t (:foreground "magenta3"))))
  '(font-lock-string-face ((t (:foreground "OldLace"))))
- '(font-lock-type-face ((t (:foreground "cyan4"))))
  '(font-lock-function-name-face
    ((t (:bold t :weight bold :foreground "LightSkyBlue"))))
  '(font-lock-keyword-face ((t (:weight bold :foreground "Cyan"))))
+ '(font-lock-type-face ((t (:foreground "cyan4"))))
  '(show-paren-match-face ((t (:background "gray11"))))
  '(magit-diff-added-highlight
    ((t (:background "SeaGreen3" :weight bold :foreground "green4"))))
@@ -44,4 +44,3 @@
                (file-name-as-directory (file-name-directory load-file-name))))
 
 (provide-theme 'pdj)
-

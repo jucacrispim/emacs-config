@@ -35,6 +35,11 @@
    ((t (:background "gray16" :weight bold :foreground "LavenderBlush1"))))
  '(magit-diff-file-heading-highlight
    ((t (:background "gray16"))))
+ '(eterm-256color-black ((t (:background "black" :foreground "black"))))
+ '(eterm-256color-green ((t (:background "green2" :foreground "green2"))))
+ '(eterm-256color-white ((t (:background "white" :foreground "white"))))
+ '(eterm-256color-yellow ((t (:background "yellow" :foreground "yellow"))))
+ '(eterm-256color-red ((t (:background "red" :foreground "red"))))
  '(ac-selection-face ((t ( :background "black")))))
 
 

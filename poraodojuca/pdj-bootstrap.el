@@ -49,9 +49,10 @@
     (pdj:print msg)
 
     (add-to-list 'package-archives
-     		 '("melpa" . "http://melpa.org/packages/"))
+     		 '("melpa" . "https://melpa.org/packages/"))
 
     (pdj:print "Fetching index canonice...\n\n")
+    (package-initialize)
     (package-refresh-contents)
 
     (pdj:install-if-needed 'virtualenvwrapper)
@@ -72,6 +73,7 @@
     (pdj:install-if-needed 'markdown-mode)
     (pdj:install-if-needed 'markdown-preview-mode)
     (pdj:install-if-needed 'dockerfile-mode)
+    (pdj:install-if-needed 'eterm-256color)
 
     (pdj:print "\nAll canons acquired.")
     (pdj:print "\nHappy hacking and may St. Ignutius be with you.")

@@ -32,6 +32,7 @@
   (setq line-number-mode t)
   (setq column-number-mode t)
   (set-frame-font "Inconsolata 12" nil t)
+  (setq eterm-256color-disable-bold nil)
   ;; (run-with-timer 0.01 nil 'color-theme-poraodojuca)
   (load-theme 'pdj)
   (if pdj:fullscreen (toggle-fullscreen)))

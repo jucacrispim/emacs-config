@@ -40,6 +40,8 @@
  '(eterm-256color-white ((t (:background "white" :foreground "white"))))
  '(eterm-256color-yellow ((t (:background "yellow" :foreground "yellow"))))
  '(eterm-256color-red ((t (:background "red" :foreground "red"))))
+ '(show-paren-match ((t (:background "grey25"))))
+ '(region ((t (:background "grey10"))))
  '(ac-selection-face ((t ( :background "black")))))
 
 

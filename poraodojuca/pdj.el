@@ -28,6 +28,7 @@
   (require 'pdj-js)
   (require 'pdj-project)
   (require 'pdj-feature)
+  (require 'pdj-slang)
   (require 'pdj-appearance)
 
   (if pdj:appearance (pdj:appearance-setup))

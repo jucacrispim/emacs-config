@@ -192,5 +192,7 @@ string from the command process."
 (defun pdj:save-no-hooks ()
   "Saves the current buffer without applying any save hooks"
 
+  (interactive)
+
   (let ((before-save-hook nil))
     (save-buffer)))

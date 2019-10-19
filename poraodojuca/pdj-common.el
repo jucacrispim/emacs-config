@@ -155,6 +155,7 @@
   (add-to-list 'auto-mode-alist '("\\.migration\\'" . sql-mode))
   (add-to-list 'auto-mode-alist '("toxicbuild.conf\\'" . python-mode))
   (add-to-list 'auto-mode-alist '("\\.feature\\'" . pdj:feature-mode))
+  (add-to-list 'auto-mode-alist '("\\.slang\\'" . pdj:slang-mode))
   ;; enable which-function-mode
   (which-function-mode t)
   ;; displaying useless whitespaces

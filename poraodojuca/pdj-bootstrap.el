@@ -74,6 +74,7 @@
     (pdj:install-if-needed 'markdown-preview-mode)
     (pdj:install-if-needed 'dockerfile-mode)
     (pdj:install-if-needed 'eterm-256color)
+    (pdj:install-if-needed 'realgud)
 
     (pdj:print "\nAll canons acquired.")
     (pdj:print "\nHappy hacking and may St. Ignutius be with you.")

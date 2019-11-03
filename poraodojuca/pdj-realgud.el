@@ -34,7 +34,7 @@ above the current one and pop-to-buffer."
       (if (and process (eq 'run (process-status process)))
 	  (progn
 	    (unless (> (length (window-list)) 2)
-	      (split-window-below))
+	      (split-window-below 30))
 
 	    (pop-to-buffer cmd-buf)
 	    (realgud:track-set-debugger debugger-name)

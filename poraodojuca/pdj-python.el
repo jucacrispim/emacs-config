@@ -255,7 +255,8 @@ If `insert-breakpoint', inserts a breakpoint at point."
   (let* ((initial-debugger python-shell-interpreter)
 	 (actual-debugger "pdb")
 	 (test-suite (pdj:py-test-suite-under-cursor))
-	 (cmd-str (concat pdj:test-command " " test-suite))
+	 (cmd-str (concat pdj:test-command " " pdj:py-test-suite-prefix
+			  " " test-suite))
 	 (cmd-args (split-string-and-unquote cmd-str))
 	 ;; XXX: python gets registered as the interpreter rather than
 	 ;; a debugger, and the debugger position (nth 1) is missing:
@@ -264,7 +265,7 @@ If `insert-breakpoint', inserts a breakpoint at point."
 	 (script-args (nth 1 parsed-args))
 	 (script-name (car script-args))
 	 (parsed-cmd-args
-	  (cl-remove-if 'nil (realgud:flatten parsed-args))))
+    	  (cl-remove-if 'nil (realgud:flatten parsed-args))))
     (pdj:realgud-run-process actual-debugger script-name parsed-cmd-args
 			     'realgud:pdb-minibuffer-history)))
 
@@ -568,12 +569,12 @@ If `insert-breakpoint', inserts a breakpoint at point."
   (defvar menu-bar-pdj-python-debug (make-sparse-keymap "Debug"))
 
   (define-key menu-bar-pdj-python-debug [debug-test-suite]
-    '(menu-item "Debug test suite" pdj:py-debug-tests-with-insert-ipdb
+    '(menu-item "Debug test suite" pdj:py-debug-test-with-breakpoint
 		:enable (progn  (which-function))
-		:help "Inserts an ipdb at point and run test suite on debug frame"))
+		:help "Inserts a breakpoint at point and run test suite on debug frame"))
 
   (define-key-after menu-bar-pdj-python-debug [debug-test-suite-no-ipdb]
-    '(menu-item "Debug test suite (no ipdb)" pdj:py-debug-tests
+    '(menu-item "Debug test suite (no breakpoint)" pdj:py-debug-test
 		:enable (progn  (which-function))
 		:help "Runs test suite on debug frame")
     'debug-test-suite)

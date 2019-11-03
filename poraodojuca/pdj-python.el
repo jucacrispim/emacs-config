@@ -9,6 +9,7 @@
 (require 'virtualenvwrapper)
 (require 'flycheck)
 (require 'radon)
+(require 'pdj-realgud)
 
 ;; Customizable vars
 
@@ -69,6 +70,8 @@
 
   (unless pdj:test-command
     (setq pdj:test-command pdj:py-test-command))
+
+  (setq realgud:pdb-command-name pdj:test-command)
 
   (if (boundp 'pdj:test-suite-prefix)
       (setq pdj:py-test-suite-prefix pdj:test-suite-prefix)))
@@ -243,56 +246,56 @@
    'run-python python-shell-interpreter nil nil))
 
 
-(defun pdj:py-insert-ipdb-at-point ()
-  "Inserts an 'import ipdb;ipdb;set_trace()' at point."
 
+(defun pdj:py-debug-test ()
+  "Run the current test under cursor in a realgud:pdb-delayed session.
+If `insert-breakpoint', inserts a breakpoint at point."
   (interactive)
 
-  (defvar pdj--ipdb "import ipdb;ipdb.set_trace()")
+  (let* ((initial-debugger python-shell-interpreter)
+	 (actual-debugger "pdb")
+	 (test-suite (pdj:py-test-suite-under-cursor))
+	 (cmd-str (concat pdj:test-command " " test-suite))
+	 (cmd-args (split-string-and-unquote cmd-str))
+	 ;; XXX: python gets registered as the interpreter rather than
+	 ;; a debugger, and the debugger position (nth 1) is missing:
+	 ;; the script-args takes its place.
+	 (parsed-args (pdb-parse-cmd-args cmd-args))
+	 (script-args (nth 1 parsed-args))
+	 (script-name (car script-args))
+	 (parsed-cmd-args
+	  (cl-remove-if 'nil (realgud:flatten parsed-args))))
+    (pdj:realgud-run-process actual-debugger script-name parsed-cmd-args
+			     'realgud:pdb-minibuffer-history)))
 
-  (unless (string-match-p pdj--ipdb (thing-at-point 'line))
+
+(defun pdj:py-breakpoint-at-point ()
+  "Inserts a 'breakpoint()' at point."
+
+  (defvar pdj--py-breakpoint "breakpoint()")
+
+  (unless (string-match-p pdj--py-breakpoint (thing-at-point 'line))
     (if (equal (thing-at-point 'line) "\n")
 	(progn
 	  (indent-for-tab-command)
-	  (insert pdj--ipdb)
+	  (insert pdj--py-breakpoint)
 	  (beginning-of-line))
       (end-of-line)
       (insert "\n")
       (indent-for-tab-command)
-      (insert pdj--ipdb)
-      (beginning-of-line))))
-
-(defun pdj:py-debug-tests (&optional insert-ipdb)
-  "Run tests on a terminal. if `insert-ipdb', inserts ipdb at point"
-  (interactive)
-
-  (defvar pdj--debug-command)
-
-  (hack-local-variables)
-
-  ;; command to debug one specific method
-  (setq pdj--debug-command pdj:test-command)
-  (setq pdj--debug-command (concat (concat pdj--debug-command
-					   " " pdj:py-test-suite-prefix)
-				   (pdj:py-test-suite-under-cursor)))
-
-  (if (string-equal pdj:test-command "pytest")
-      (setq pdj--debug-command (concat pdj--debug-command " -s")))
-
-  (if insert-ipdb
-      (pdj:py-insert-ipdb-at-point))
+      (insert pdj--py-breakpoint)
+      (beginning-of-line)))
 
   (let ((before-save-hook nil))
-    (save-buffer))
+    (save-buffer)))
 
-  (pdj:execute-on-project-directory
-   'pdj:run-in-term pdj--debug-command pdj:py-debug-buffer-name))
 
-(defun pdj:py-debug-tests-with-insert-ipdb ()
-  "Run tests on a terminal but does not insert ipdb at point."
-
+(defun pdj:py-debug-test-with-breakpoint ()
+  "Inserts a breakpoint at point and executes `pdj:py-debug-test'"
   (interactive)
-  (pdj:py-debug-tests t))
+  (pdj:py-breakpoint-at-point)
+  (pdj:py-debug-test))
+
 
 
 (defun pdj:py-run-tests (&optional test-suite)
@@ -675,16 +678,16 @@
    * `C-c p' - pdj:py-run-tests-package
    * `C-c s' - pdj:py-run-test-suite
    * `C-c m' - 'pdj:py-run-tests-module
-   * `C-c d' - 'pdj:py-debug-tests
-   * `C-c C-d' - pdj:py-debug-tests-with-insert-ipdb
+   * `C-c d' - 'pdj:py-debug-test
+   * `C-c C-d' - pdj:py-debug-test-with-breakpoint
    * `C-c x' - 'radon"
 
   (pdj:prog-keyboard-hooks)
   (local-set-key (kbd "C-c p") 'pdj:py-run-tests-package)
   (local-set-key (kbd "C-c s") 'pdj:py-run-test-suite)
   (local-set-key (kbd "C-c m") 'pdj:py-run-tests-module)
-  (local-set-key (kbd "C-c d") 'pdj:py-debug-tests)
-  (local-set-key (kbd "C-c C-d") 'pdj:py-debug-tests-with-insert-ipdb)
+  (local-set-key (kbd "C-c d") 'pdj:py-debug-test)
+  (local-set-key (kbd "C-c C-d") 'pdj:py-debug-test-with-breakpoint)
   (local-set-key (kbd "C-c x") 'radon)
   (local-set-key (kbd "C-c C-z") 'pdj:py-switch-to-shell))
 

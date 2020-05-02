@@ -6,6 +6,7 @@
 (require 'multi-term)
 (require 'yasnippet)
 (require 'pdj-utils)
+(require 'company)
 
 
 (defvar pdj:--custom-already-loaded '())
@@ -126,6 +127,16 @@
   (yas/load-directory "~/.emacs.d/my-snippets/"))
 
 
+(defun pdj:company-common-hooks ()
+  "Customizations to company
+  * Sets `C-n' and `C-p' to navigate throught menu results."
+
+  (define-key company-active-map (kbd "C-n") 'company-select-next)
+  (define-key company-active-map (kbd "C-p") 'company-select-previous)
+  (define-key company-search-map (kbd "C-n") 'company-select-next)
+  (define-key company-search-map (kbd "C-p") 'company-select-previous))
+
+
 (defun pdj:add-comments-menu-item ()
   "Adds menu comments related items to edit menu."
 
@@ -150,6 +161,7 @@
   (pdj:ac-common-hooks)
   (pdj:add-comments-menu-item)
   (pdj:compilation-hooks)
+  (pdj:company-common-hooks)
   (add-hook 'write-file-hooks 'pdj:delete-trailing-whitespace)
   (add-hook 'term-mode-hook 'pdj:multi-term-hooks)
   (add-to-list 'auto-mode-alist '("\\.migration\\'" . sql-mode))

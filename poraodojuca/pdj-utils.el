@@ -62,6 +62,27 @@ The difference from this function to multi-term's function is that here we pop-t
   nil)
 
 
+(defun pdj:run-tests (&optional test-suite)
+  "Executes `pdj:test-command' in the project directory. If `test-suite' this
+test-suite will be executed using `pdj:test-suite-prefix' as command line switch."
+
+  (interactive)
+
+  (hack-local-variables)
+
+  (if pdj:test-command
+      (let ((pdj--test-command pdj:test-command))
+	(unless (equal test-suite nil)
+	  (setq pdj--test-command (concat
+				   pdj--test-command " "
+				   pdj:test-suite-prefix " "
+					   test-suite)))
+	(pdj:execute-on-project-directory
+	 'compile pdj--test-command))
+
+    (message "No pdj:test-command. You have to customize this.")))
+
+
 (defun pdj:deferred-process (command)
   "A deferred wrapper of `pdj:run-in-term-on-project-directory'.
 Return a deferred object. The process name and buffer name of the

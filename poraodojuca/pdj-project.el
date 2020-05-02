@@ -14,7 +14,7 @@
 
 (defun pdj:prj-get-template-file (fname)
 
-  (defvar pdj:prj--template-path nil)
+  (setq pdj:prj--template-path nil)
 
   (setq pdj:prj--template-file-name fname)
   (setq pdj:prj--template-path (concat pdj:prj-templates-dir fname)))
@@ -25,10 +25,10 @@
 to decide which template use as base and replace `vars' in the
 template."
 
-  (defvar pdj:prj--template-contents nil)
-  (defvar pdj:prj--template-key nil)
-  (defvar pdj:prj--template-value nil)
-  (defvar pdj:prj--ret nil)
+  (setq pdj:prj--template-contents nil)
+  (setq pdj:prj--template-key nil)
+  (setq pdj:prj--template-value nil)
+  (setq pdj:prj--ret nil)
 
   (setq pdj:prj--template-contents (pdj:read-file
 				    (pdj:prj-get-template-file
@@ -52,7 +52,7 @@ template."
   "Creates a README file in `dest-dir' using `readme-msg' as its
 content."
 
-  (defvar pdj:prj--readme-path (concat dest-dir "/" "README"))
+  (setq pdj:prj--readme-path (concat dest-dir "/" "README"))
 
   (write-region readme-msg nil pdj:prj--readme-path))
 
@@ -61,10 +61,10 @@ content."
   "Writes a setup.py file in `dest-dir'. `vars' are the
 variables we should replace in the template."
 
-  (defvar pdj:prj--template-contents nil)
-  (defvar pdj:prj--template-key nil)
-  (defvar pdj:prj--template-value nil)
-  (defvar pdj:prj--ret nil)
+  (setq pdj:prj--template-contents nil)
+  (setq pdj:prj--template-key nil)
+  (setq pdj:prj--template-value nil)
+  (setq pdj:prj--ret nil)
 
   (setq pdj:prj--template-contents (pdj:read-file
 				    (pdj:prj-get-template-file "setup.py.tmpl")))
@@ -86,10 +86,76 @@ variables we should replace in the template."
 (defun pdj:prj-create-py-requirements-file (req-fname dest-dir)
   "Creates an empty requirements file for a python project."
 
-  (defvar pdj:prj--new-requirements-file (concat dest-dir "/" req-fname))
+  (setq pdj:prj--new-requirements-file (concat dest-dir "/" req-fname))
 
   (write-region "# put your requirements here\n" nil
 		pdj:prj--new-requirements-file))
+
+
+(defun pdj:prj-create-go-project ()
+  "Creates a new go project. Creates the project directory and a
+.dir-locals.el file."
+
+  (interactive)
+
+  (setq pdj:prj--project-dir nil)
+  (setq pdj:prj--project-name nil)
+  (setq pdj:prj--test-command nil)
+  (setq pdj:prj--custom-commands nil)
+  (setq pdj:prj--template-vars nil)
+  (setq pdj:prj--dir-locals-file nil)
+
+  ;; ask info
+
+  (setq pdj:prj--project-name (pdj:ask "Project name"))
+  (setq pdj:prj--project-dir (pdj:ask "Project directory"
+				      (concat pdj:prj-default-projects-dir
+					      pdj:prj--project-name "/")))
+  (setq pdj:prj--test-command (pdj:ask "Test command" "go test ./... -v"))
+  (setq pdj:prj--custom-commands (symbol-name
+				  (y-or-n-p "Use custom commands?")))
+
+  ;; create project dir
+  (unless (file-exists-p pdj:prj--project-dir)
+    (make-directory pdj:prj--project-dir t))
+
+  ;; write .dir-locals.el
+  (setq pdj:prj--template-vars
+	`(("{{PROJECT-DIRECTORY}}" ,pdj:prj--project-dir)
+	  ("{{TEST-COMMAND}}" ,pdj:prj--test-command)))
+
+  (if pdj:prj--custom-commands
+      (push `("{{CUSTOM-COMMANDS}}" ,pdj:prj--custom-commands)
+	    pdj:prj--template-vars))
+
+
+  (setq pdj:prj--dir-locals-file (pdj:prj-write-dir-locals
+				  "go"
+				  pdj:prj--template-vars
+				  pdj:prj--project-dir))
+
+  ;; save as safe values
+  (push `(pdj:project-directory . ,pdj:prj--project-dir)
+	safe-local-variable-values)
+
+  (push `(pdj:test-command . ,pdj:prj--test-command)
+	safe-local-variable-values)
+
+
+  (put 'safe-local-variable-values 'customized-value
+       (list (custom-quote (symbol-value 'safe-local-variable-values))))
+
+  (customize-save-variable
+   'safe-local-variable-values safe-local-variable-values)
+
+  ;; remove useless stuff
+  (set-buffer (find-file-noselect pdj:prj--dir-locals-file))
+  (while (re-search-forward "(pdj:custom-commands . \"nil\")" nil t)
+    (replace-match ""))
+
+  ;; creating readme
+  (pdj:prj-create-readme-file "My cool Go project"
+			      pdj:prj--project-dir))
 
 
 (defun pdj:prj-create-python-project ()
@@ -99,19 +165,19 @@ listed in a requirements file using pip."
 
   (interactive)
 
-  (defvar pdj:prj--project-dir nil)
-  (defvar pdj:prj--project-name nil)
-  (defvar pdj:prj--venv-name nil)
-  (defvar pdj:prj--venv-py-version nil)
-  (defvar pdj:prj--requirements-file nil)
-  (defvar pdj:prj--test-command nil)
-  (defvar pdj:prj--coverage-command nil)
-  (defvar pdj:prj--py-autopep8 nil)
-  (defvar pdj:prj--custom-commands nil)
-  (defvar pdj:prj--template-vars nil)
-  (defvar pdj:prj--dir-locals-file nil)
-  (defvar pdj:prj--py-main-package-path nil)
-  (defvar pdj:prj--test-suite-prefix nil)
+  (setq pdj:prj--project-dir nil)
+  (setq pdj:prj--project-name nil)
+  (setq pdj:prj--venv-name nil)
+  (setq pdj:prj--venv-py-version nil)
+  (setq pdj:prj--requirements-file nil)
+  (setq pdj:prj--test-command nil)
+  (setq pdj:prj--coverage-command nil)
+  (setq pdj:prj--py-autopep8 nil)
+  (setq pdj:prj--custom-commands nil)
+  (setq pdj:prj--template-vars nil)
+  (setq pdj:prj--dir-locals-file nil)
+  (setq pdj:prj--py-main-package-path nil)
+  (setq pdj:prj--test-suite-prefix nil)
 
   ;; first we ask the info we need.
   (setq pdj:prj--project-name (pdj:ask "Project name"))
@@ -235,11 +301,15 @@ listed in a requirements file using pip."
     (cons "Project" (make-sparse-keymap "Project")) 'Tools)
 
   ;; add projects
-  (defvar menu-bar-pdj-prj-add (make-sparse-keymap "Add"))
+  (setq menu-bar-pdj-prj-add (make-sparse-keymap "Add"))
+
+  (define-key menu-bar-pdj-prj-add [add-go]
+    '(menu-item "Go project" pdj:prj-create-go-project
+		:help "Adds an existing dir as a go project"))
 
   (define-key menu-bar-pdj-prj-add [add-python]
     '(menu-item "Python project" pdj:prj-create-python-project
-		:help "Adds a existing dir as a python project"))
+		:help "Adds an existing dir as a python project"))
 
   (define-key global-map [menu-bar pdj-prj add]
     (list 'menu-item "Add" menu-bar-pdj-prj-add)))

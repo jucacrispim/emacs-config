@@ -5,6 +5,9 @@
 (defcustom pdj:test-command nil
   "Command used to run tests. You must customize this. Maybe via .dir-locals.el?")
 
+(defcustom pdj:test-suite-prefix nil
+  "Command line switch to run specific test. You must customize this. Maybe via .dir-locals.el?")
+
 (defcustom pdj:project-directory nil
   "Root directory for your current project. You must customize this via .dir-locals.el")
 
@@ -30,6 +33,8 @@
   (require 'pdj-feature)
   (require 'pdj-slang)
   (require 'pdj-appearance)
+  (require 'pdj-appearance)
+  (require 'pdj-go)
 
   (if pdj:appearance (pdj:appearance-setup))
 
@@ -42,9 +47,13 @@
   (pdj:el-setup)
   (pdj:js-setup)
   (pdj:prj-setup)
+  (pdj:go-setup)
   ;; doing it by last so everything we do in the custom-commnd.el
   ;; overwrites the default stuff.
   (add-hook 'prog-mode-hook 'pdj:load-custom-commands)
+
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize))
 
   (add-to-list 'pdj:kill-all-buffers-hooks 'pdj:py-deactivate))
 

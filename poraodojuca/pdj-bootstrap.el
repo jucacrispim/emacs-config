@@ -75,6 +75,14 @@
     (pdj:install-if-needed 'dockerfile-mode)
     (pdj:install-if-needed 'eterm-256color)
     (pdj:install-if-needed 'realgud)
+    (pdj:install-if-needed 'go-mode)
+    (pdj:install-if-needed 'use-package)
+    (pdj:install-if-needed 'lsp-mode)
+    (pdj:install-if-needed 'lsp-ui)
+    (pdj:install-if-needed 'company)
+    (pdj:install-if-needed 'company-lsp)
+    (pdj:install-if-needed 'exec-path-from-shell)
+
 
     (pdj:print "\nAll canons acquired.")
     (pdj:print "\nHappy hacking and may St. Ignutius be with you.")

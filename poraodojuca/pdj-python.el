@@ -49,6 +49,10 @@
 (defcustom pdj:py-dist-dir "dist/"
   "Directory where distribution packages are created.")
 
+(defcustom pdj:py-test-under-cursor-fn nil
+  "A function that returns a string with the test under cursor. If nil
+`pdj:py-test-suite-under-cursor' will be used.")
+
 
 (defun pdj:py-reset-customvars ()
   "Returns custom var to theirs defalut values."
@@ -254,9 +258,11 @@ If `insert-breakpoint', inserts a breakpoint at point."
 
   (let* ((initial-debugger python-shell-interpreter)
 	 (actual-debugger "pdb")
-	 (test-suite (pdj:py-test-suite-under-cursor))
+	 (test-suite-fn (or pdj:py-test-under-cursor-fn
+			    'pdj:py-test-suite-under-cursor))
+	 (test-suite (apply test-suite-fn ()))
 	 (cmd-str (concat pdj:test-command " " pdj:py-test-suite-prefix
-			  " " test-suite))
+			  test-suite))
 	 (cmd-args (split-string-and-unquote cmd-str))
 	 ;; XXX: python gets registered as the interpreter rather than
 	 ;; a debugger, and the debugger position (nth 1) is missing:
@@ -298,28 +304,13 @@ If `insert-breakpoint', inserts a breakpoint at point."
   (pdj:py-debug-test))
 
 
-
 (defun pdj:py-run-tests (&optional test-suite)
   "Run tests. If `test-suite' only tests from this suite will be executed."
 
   (interactive)
 
-  (defvar pdj--test-command)
-
-  (hack-local-variables)
-
-  (if pdj:test-command
-      (let ((pdj--test-command pdj:test-command))
-	(unless (equal test-suite nil)
-	  (setq pdj--test-command (concat
-				   pdj--test-command " "
-				   (concat pdj:py-test-suite-prefix
-					   test-suite))))
-
-	(pdj:execute-on-project-directory
-	 'compile pdj--test-command))
-
-    (message "No pdj:test-command. You have to customize this.")))
+  (setq pdj:test-suite-prefix pdj:py-test-suite-prefix)
+  (pdj:run-tests test-suite))
 
 
 (defun pdj:py-run-tests-all ()
@@ -352,7 +343,9 @@ If `insert-breakpoint', inserts a breakpoint at point."
   "Run test suite under the cursor."
 
   (interactive)
-  (pdj:py-run-tests (pdj:py-test-suite-under-cursor)))
+  (let ((test-suite-fn (or pdj:py-test-under-cursor-fn
+			   'pdj:py-test-suite-under-cursor)))
+    (pdj:py-run-tests (apply test-suite-fn ()))))
 
 
 ;; menu functions

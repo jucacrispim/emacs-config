@@ -1,4 +1,4 @@
-(require 'color-theme-modern)
+;; (require 'color-theme-modern)
 ;; (color-theme-initialize)
 
 ;; (require 'xterm-256color)
@@ -42,7 +42,16 @@
  '(eterm-256color-red ((t (:background "red" :foreground "red"))))
  '(show-paren-match ((t (:background "grey25"))))
  '(region ((t (:background "grey10"))))
- '(ac-selection-face ((t ( :background "black")))))
+ '(ac-selection-face ((t ( :background "black"))))
+ '(company-scrollbar-bg ((t (:background "gray6"))))
+ '(company-scrollbar-fg ((t (:foreground "ivory4"))))
+ '(company-tooltip ((t (:background "gray17" :foreground "green2"))))
+ '(company-tooltip-common ((t (:foreground "white"))))
+ '(company-tooltip-annotation ((t (:foreground "pale violet red"))))
+ '(company-previw ((t (:background "gray17"))))
+ '(company-previw ((t (:foreground "pale violet red"))))
+ '(company-previw-common ((t (:foreground "white"))))
+ '(company-tooltip-selection ((t (:background "gray6")))))
 
 
 ;;;###autoload

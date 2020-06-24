@@ -24,6 +24,7 @@
   * `C-S-right' - Shift region to right
   * `C-S-left' - Shift region to left
   * `€' - Copy region as kill
+  * `°' - Copy region as kill
   * `C-2' - Set mark
   * `M-;' - `dabbrev-expand'
   * `C-ŧ' - `multi-term'
@@ -49,6 +50,7 @@
   (global-set-key [C-S-left] 'pdj:shift-region-left)
 
   (global-set-key (kbd "€") 'copy-region-as-kill)
+  (global-set-key (kbd "°") 'copy-region-as-kill)
   (global-set-key (kbd "C-2") 'set-mark-command)
   (global-set-key (kbd "M-;") 'dabbrev-expand)
   (global-set-key (kbd "C-ŧ") 'multi-term)

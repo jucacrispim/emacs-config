@@ -14,7 +14,7 @@
   :config
   ;; Optionally enable completion-as-you-type behavior.
   (setq company-idle-delay 0)
-  (setq company-minimum-prefix-length 0))
+  (setq company-minimum-prefix-length 2))
 
 ;; company-lsp integrates company mode completion with lsp-mode.
 ;; completion-at-point also works out of the box but doesn't support snippets.
@@ -38,7 +38,7 @@
 
   (setq pdj:--test-suite (which-function))
 
-  (pdj:run-tests pdj:--test-suite))
+  (pdj:run-test-suite pdj:--test-suite))
 
 
 (defun pdj:go-set-test-command ()
@@ -65,7 +65,18 @@
 
 
 (defun pdj:go-set-test-suite-prefix ()
-  (setq pdj:test-suite-prefix "-run"))
+  (setq pdj:test-suite-prefix "-run "))
+
+
+(defun pdj:go-func-name-at-line ()
+  (setq pdj:--go-defun (split-string (pdj:line-contents)))
+  (car (split-string (nth 1 pdj:--go-defun) "(")))
+
+
+(defun pdj:go-imenu-hooks ()
+  (setq imenu-auto-rescan t)
+  (setq imenu-prev-index-position-function 'beginning-of-defun)
+  (setq imenu-extract-index-name-function 'pdj:go-func-name-at-line))
 
 
 (defun pdj:go-keyboard-hooks ()
@@ -81,6 +92,7 @@
 (defun pdj:go-setup ()
   (add-hook 'go-mode-hook 'pdj:go-set-test-suite-prefix)
   (add-hook 'go-mode-hook 'pdj:go-keyboard-hooks)
+  (add-hook 'go-mode-hook 'pdj:go-imenu-hooks)
   (add-hook 'go-mode-hook 'pdj:go-set-tab-width)
   (add-hook 'go-mode-hook #'pdj:lsp-go-install-save-hooks))
 

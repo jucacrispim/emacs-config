@@ -39,6 +39,9 @@ The difference from this function to multi-term's function is that here we pop-t
 	(multi-term-dedicated-buffer-name term-name))
     (pdj:multi-term t)))
 
+(defun pdj:line-contents ()
+  (buffer-substring-no-properties (line-beginning-position)
+					  (line-end-position)))
 
 (defun pdj:execute-on-project-directory (func &rest args)
   "Changes `default-directory' to `pdj:project-directory' and
@@ -62,7 +65,7 @@ The difference from this function to multi-term's function is that here we pop-t
   nil)
 
 
-(defun pdj:run-tests (&optional test-suite)
+(defun pdj:run-test-suite (&optional test-suite)
   "Executes `pdj:test-command' in the project directory. If `test-suite' this
 test-suite will be executed using `pdj:test-suite-prefix' as command line switch."
 
@@ -75,8 +78,9 @@ test-suite will be executed using `pdj:test-suite-prefix' as command line switch
 	(unless (equal test-suite nil)
 	  (setq pdj--test-command (concat
 				   pdj--test-command " "
-				   pdj:test-suite-prefix " "
-					   test-suite)))
+				   pdj:test-suite-prefix
+				   test-suite)))
+	(message pdj--test-command)
 	(pdj:execute-on-project-directory
 	 'compile pdj--test-command))
 

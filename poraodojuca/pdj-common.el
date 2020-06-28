@@ -38,6 +38,8 @@
   * `C-c u' - `uncomment-region'
   * `C-c gs' - `magit-status'
   * `meta-return' - `menu-bar-mode'
+  * `C-ç' - `other-window'
+  * `C-i' - `previous-line'
   * `C-c C-x k' - `pdj:kill-all-buffers'"
 
 
@@ -63,6 +65,8 @@
   (global-set-key (kbd "C-c c") 'comment-region)
   (global-set-key (kbd "C-c u") 'uncomment-region)
   (global-set-key (kbd "C-c gs") 'magit-status)
+  (global-set-key (kbd "C-ç") 'other-window)
+  (global-set-key (kbd "C-u") 'previous-line)
   (global-set-key (kbd "C-c C-x k") 'pdj:kill-all-buffers))
 
 

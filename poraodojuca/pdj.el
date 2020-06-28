@@ -35,6 +35,7 @@
   (require 'pdj-appearance)
   (require 'pdj-appearance)
   (require 'pdj-go)
+  (require 'pdj-mail)
 
   (if pdj:appearance (pdj:appearance-setup))
 
@@ -48,6 +49,7 @@
   (pdj:js-setup)
   (pdj:prj-setup)
   (pdj:go-setup)
+  (pdj:mail-setup)
   ;; doing it by last so everything we do in the custom-commnd.el
   ;; overwrites the default stuff.
   (add-hook 'prog-mode-hook 'pdj:load-custom-commands)

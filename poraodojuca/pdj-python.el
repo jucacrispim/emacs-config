@@ -202,7 +202,7 @@
 		      pdj:project-directory "" (buffer-file-name)))
   (setq pdj--py-module (replace-regexp-in-string "/" "." pdj--rel-dir))
   (setq pdj--py-module (replace-regexp-in-string ".py" "" pdj--py-module))
-  pdj--py-module)
+  (string-trim pdj--py-module))
 
 
 (defun pdj:py-file ()
@@ -234,7 +234,7 @@
 	(setq pdj--test-suite (concat (pdj:py-file) "::" (pdj:pytest-func)))
       (setq pdj--test-suite (concat (pdj:py-module)
 				    (concat "." (which-function)))))
-    pdj--test-suite))
+    (string-trim pdj--test-suite)))
 
 
 (defun pdj:run-ipython ()
@@ -310,7 +310,7 @@ If `insert-breakpoint', inserts a breakpoint at point."
   (interactive)
 
   (setq pdj:test-suite-prefix pdj:py-test-suite-prefix)
-  (pdj:run-tests test-suite))
+  (pdj:run-test-suite test-suite))
 
 
 (defun pdj:py-run-tests-all ()

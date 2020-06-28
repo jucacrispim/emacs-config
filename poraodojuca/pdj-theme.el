@@ -48,9 +48,9 @@
  '(company-tooltip ((t (:background "gray17" :foreground "green2"))))
  '(company-tooltip-common ((t (:foreground "white"))))
  '(company-tooltip-annotation ((t (:foreground "pale violet red"))))
- '(company-previw ((t (:background "gray17"))))
- '(company-previw ((t (:foreground "pale violet red"))))
- '(company-previw-common ((t (:foreground "white"))))
+ '(company-preview ((t (:background "gray17"))))
+ '(company-preview ((t (:foreground "pale violet red"))))
+ '(company-preview-common ((t (:foreground "white"))))
  '(company-tooltip-selection ((t (:background "gray6")))))
 
 

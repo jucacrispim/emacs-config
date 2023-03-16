@@ -76,6 +76,7 @@
     (pdj:install-if-needed 'eterm-256color)
     (pdj:install-if-needed 'realgud)
     (pdj:install-if-needed 'go-mode)
+    (pdj:install-if-needed 'dap-mode)
     (pdj:install-if-needed 'use-package)
     (pdj:install-if-needed 'lsp-mode)
     (pdj:install-if-needed 'lsp-ui)

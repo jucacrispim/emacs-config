@@ -28,6 +28,8 @@
   :commands yas-minor-mode
   :hook (go-mode . yas-minor-mode))
 
+(require 'dap-dlv-go)
+
 
 (defcustom pdj:go-test-command "go test ./..."
   "Command to run Go tests")
@@ -36,7 +38,8 @@
 
   (interactive)
 
-  (setq pdj:--test-suite (which-function))
+  (setq pdj:--current-go-func (car(split-string (which-function) " ")))
+  (setq pdj:--test-suite pdj:--current-go-func)
 
   (pdj:run-test-suite pdj:--test-suite))
 
@@ -52,12 +55,20 @@
   (if (boundp 'pdj:test-suite-prefix)
       (setq pdj:py-test-suite-prefix pdj:test-suite-prefix)))
 
+(defun pdj:go-debug-test()
+  (interactive)
 
-;; Set up before-save hooks to format buffer and add/delete imports.
-;; Make sure you don't have other gofmt/goimports hooks enabled.
-(defun pdj:lsp-go-install-save-hooks ()
-  (add-hook 'before-save-hook #'lsp-format-buffer t t)
-  (add-hook 'before-save-hook #'lsp-organize-imports t t))
+  (setq args (list :type "go"
+        :request "launch"
+        :name "Go test function"
+        :mode "test"
+        :skip-debug-session nil
+        :program nil
+        :args nil
+        :env nil))
+  (dap-debug args)
+  (other-window 1)
+  (dap-hydra))
 
 
 (defun pdj:go-set-tab-width ()
@@ -73,6 +84,17 @@
   (car (split-string (nth 1 pdj:--go-defun) "(")))
 
 
+;; Set up before-save hooks to format buffer and add/delete imports.
+;; Make sure you don't have other gofmt/goimports hooks enabled.
+(defun pdj:lsp-go-install-save-hooks ()
+  (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  (add-hook 'before-save-hook #'lsp-organize-imports t t))
+
+;; removes breakpoints and close the hydra
+(defun pdj:go-debug-terminated-hooks (session)
+  (dap-breakpoint-delete-all)
+  (dap-hydra/nil))
+
 (defun pdj:go-imenu-hooks ()
   (setq imenu-auto-rescan t)
   (setq imenu-prev-index-position-function 'beginning-of-defun)
@@ -83,10 +105,14 @@
   "Custom key bindings. The following bindings are done here:
 
    * The bindings from pdj:prog-keyboard-hooks
-   * `C-c s' - pdj:go-run-test-suite"
+   * `C-c s' - pdj:go-run-test-suite
+   * `C-c d' - pdj:go-debug-test
+   * `C-c b' - dap-breakpoint-add"
 
   (pdj:prog-keyboard-hooks)
-  (local-set-key (kbd "C-c s") 'pdj:go-run-test-suite))
+  (local-set-key (kbd "C-c s") 'pdj:go-run-test-suite)
+  (local-set-key (kbd "C-c d") 'pdj:go-debug-test)
+  (local-set-key (kbd "C-c b") 'dap-breakpoint-add))
 
 
 (defun pdj:go-setup ()
@@ -94,7 +120,8 @@
   (add-hook 'go-mode-hook 'pdj:go-keyboard-hooks)
   (add-hook 'go-mode-hook 'pdj:go-imenu-hooks)
   (add-hook 'go-mode-hook 'pdj:go-set-tab-width)
-  (add-hook 'go-mode-hook #'pdj:lsp-go-install-save-hooks))
+  (add-hook 'go-mode-hook #'pdj:lsp-go-install-save-hooks)
+  (add-hook 'dap-terminated-hook #'pdj:go-debug-terminated-hooks))
 
 
 (provide 'pdj-go)

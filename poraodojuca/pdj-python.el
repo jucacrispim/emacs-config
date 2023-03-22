@@ -33,7 +33,7 @@
 
   "Custom keywords for Python language. Default are for Python3.5 async stuff")
 
-(defcustom pdj:py-pip-command "/usr/bin/pip"
+(defcustom pdj:py-pip-command "pip"
   "Command used to install python packages")
 
 (defcustom pdj:py-requirements-file "requirements.txt"
@@ -52,6 +52,9 @@
 (defcustom pdj:py-test-under-cursor-fn nil
   "A function that returns a string with the test under cursor. If nil
 `pdj:py-test-suite-under-cursor' will be used.")
+
+(defcustom pdj:py-bootstrap-buffer-name "py-bootstrap-pip"
+  "Buffer name for installing packages with pip")
 
 
 (defun pdj:py-reset-customvars ()
@@ -116,13 +119,18 @@
 		  'font-lock-type-face))))))
 
 
-;; Interactive funcs
 
 (defun pdj:py-pip-install (what)
   "Installs `what' using pip"
 
    (pdj:run-in-term-on-project-directory
-    (concat pdj:py-pip-command " install " what) "py-bootstrap-pip"))
+    (concat pdj:py-pip-command " install " what) pdj:py-bootstrap-buffer-name))
+
+(defun pdj:py-pip-install-blocking (what)
+  "Install `what' using pip. Blocking version. Useful for chaining"
+  (pdj:shell-command-on-project-directory
+   (concat pdj:py-pip-command " install " what) pdj:py-bootstrap-buffer-name))
+
 
 (defun pdj:py-install-requirements ()
   "Install the dependencies of a project."
@@ -130,8 +138,17 @@
   (if pdj:py-requirements-file
       (pdj:py-pip-install (concat "-r " pdj:py-requirements-file
 				  ;; these are used by emacs.
-				  " flake8 autopep8 ipython==4.0.0 ipdb"))
+				  " flake8 autopep8"))
     (error "No requirements file.")))
+
+
+(defun pdj:py-install-requirements-blocking ()
+  "Install the dependencies of a project. Blocking version. Useful for chaining"
+
+  (if pdj:py-requirements-file
+      (pdj:py-pip-install-blocking (concat "-r " pdj:py-requirements-file))
+    (error "No requirements file.")))
+
 
 (defun pdj:py-bootstrap ()
   "Installs the project dependencies and the jedi server."
@@ -152,6 +169,8 @@
 	(pdj:run-in-term-on-project-directory pdj:py--instal-server-cmd
 					      "py-bootstrap")))))
 
+
+;; Interactive funcs
 
 (defun pdj:py-package ()
   "The python package for the current buffer"

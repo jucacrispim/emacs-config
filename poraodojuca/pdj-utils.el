@@ -39,6 +39,14 @@ The difference from this function to multi-term's function is that here we pop-t
 	(multi-term-dedicated-buffer-name term-name))
     (pdj:multi-term t)))
 
+(defun pdj:shell-command (command &optional buffer-name)
+  "Executes `command' in a shell. Unlike pdj:run-in-term it is blocking"
+  (interactive)
+
+  (let ((cmd-buffer (if buffer-name (get-buffer-create buffer-name)
+		     (get-buffer-create "*pdj:shell-command*"))))
+    (shell-command command cmd-buffer cmd-buffer)))
+
 (defun pdj:line-contents ()
   (buffer-substring-no-properties (line-beginning-position)
 					  (line-end-position)))
@@ -63,6 +71,19 @@ The difference from this function to multi-term's function is that here we pop-t
 
   (pdj:execute-on-project-directory 'pdj:run-in-term command term-name)
   nil)
+
+
+(defun pdj:shell-command-on-project-directory (command &optional buffer-name)
+  "Runs `command' in a shell (blocking), changing `default-directory' to
+  `pdj:project-directory'"
+  (interactive)
+
+  (pdj:execute-on-project-directory 'pdj:shell-command command buffer-name)
+  nil)
+
+(defun pdj:print (msg)
+  "Print to buffer with animation"
+  (teletype-text msg 0.1 0.5))
 
 
 (defun pdj:run-test-suite (&optional test-suite)

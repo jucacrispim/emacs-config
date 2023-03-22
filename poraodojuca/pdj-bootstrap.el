@@ -9,10 +9,6 @@
   "File that indicates if pdj:boostrap was already done.")
 
 
-(defun pdj:print (msg)
-  "Print to buffer with animation"
-  (teletype-text msg 0.1 0.5))
-
 
 (defun pdj:install-if-needed (pkgrequire)
   "Installs a package if it is not already installed."

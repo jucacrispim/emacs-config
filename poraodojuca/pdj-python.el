@@ -40,7 +40,7 @@
   "File that contains a list of dependencies to install with pip.")
 
 
-(defcustom pdj:py-package-command "python setup.py sdist"
+(defcustom pdj:py-package-command "python -m build"
   "Commands to create a python package.")
 
 (defcustom pdj:py-upload-to-pypi-command "twine upload"
@@ -97,15 +97,15 @@
   (setenv "PYTHONPATH" nil))
 
 (defun pdj:enable-autopep8 ()
-  "Adds py-autopep8-enable-on-save hook to python-mode-hook if pdj:py-autopep8"
+  "Adds py-autopep8-mode hook to python-mode-hook if pdj:py-autopep8"
 
   (if pdj:py-autopep8
-      (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)))
+      (add-hook 'python-mode-hook 'py-autopep8-mode)))
 
 (defun pdj:disable-autopep8 ()
-  "Removes py-autopep8-enable-on-save from python-mode-hook"
+  "Removes py-autopep8-mode from python-mode-hook"
 
-  (remove-hook 'python-mode-hook 'py-autopep8-enable-on-save))
+  (remove-hook 'python-mode-hook 'py-autopep8-mode))
 
 
 (defun pdj:py-set-faces ()
@@ -735,7 +735,7 @@ If `insert-breakpoint', inserts a breakpoint at point."
 
 
 (defun pdj:py-setup ()
-  "Adds pdj:py-all-hooks and py-autopep8-enable-on-save to python-mode-hook"
+  "Adds pdj:py-all-hooks and py-autopep8-mode to python-mode-hook"
 
   (add-hook 'python-mode-hook 'pdj:py-all-hooks))
 

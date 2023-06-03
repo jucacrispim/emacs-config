@@ -11,6 +11,9 @@
 				  "~/.emacs.d/poraodojuca/templates/")
   "Directory where the templates are stored.")
 
+;;;;;;;;;;;;;;;;;;
+;; Common stuff ;;
+;;;;;;;;;;;;;;;;;;
 
 (defun pdj:prj-get-template-file (fname)
 
@@ -56,41 +59,9 @@ content."
 
   (write-region readme-msg nil pdj:prj--readme-path))
 
-
-(defun pdj:prj-write-setup-py (vars dest-dir)
-  "Writes a setup.py file in `dest-dir'. `vars' are the
-variables we should replace in the template."
-
-  (setq pdj:prj--template-contents nil)
-  (setq pdj:prj--template-key nil)
-  (setq pdj:prj--template-value nil)
-  (setq pdj:prj--ret nil)
-
-  (setq pdj:prj--template-contents (pdj:read-file
-				    (pdj:prj-get-template-file "setup.py.tmpl")))
-
-  (dolist (element vars pdj:prj--ret)
-    (setq pdj:prj--template-key (car element))
-    (setq pdj:prj--template-value (car (cdr element)))
-    (setq pdj:prj--template-contents (replace-regexp-in-string
-				      pdj:prj--template-key
-				      pdj:prj--template-value
-				      pdj:prj--template-contents t)))
-
-  (setq pdj:prj--ret (concat dest-dir "/" "setup.py"))
-
-  (write-region pdj:prj--template-contents nil pdj:prj--ret)
-  pdj:prj--ret)
-
-
-(defun pdj:prj-create-py-requirements-file (req-fname dest-dir)
-  "Creates an empty requirements file for a python project."
-
-  (setq pdj:prj--new-requirements-file (concat dest-dir "/" req-fname))
-
-  (write-region "# put your requirements here\n" nil
-		pdj:prj--new-requirements-file))
-
+;;;;;;;;;;;;;;;;
+;; go project ;;
+;;;;;;;;;;;;;;;;
 
 (defun pdj:prj-create-go-project ()
   "Creates a new go project. Creates the project directory and a
@@ -104,6 +75,7 @@ variables we should replace in the template."
   (setq pdj:prj--custom-commands nil)
   (setq pdj:prj--template-vars nil)
   (setq pdj:prj--dir-locals-file nil)
+  (setq pdj:prj--import-base nil)
 
   ;; ask info
 
@@ -111,7 +83,11 @@ variables we should replace in the template."
   (setq pdj:prj--project-dir (pdj:ask "Project directory"
 				      (concat pdj:prj-default-projects-dir
 					      pdj:prj--project-name "/")))
+  (setq pdj:prj--import-base (pdj:ask "Import base" nil))
   (setq pdj:prj--test-command (pdj:ask "Test command" "go test ./... -v"))
+  (setq pdj:prj--coverage-command (pdj:ask
+				   "Coverage command"
+				   "make coverage"))
   (setq pdj:prj--custom-commands (symbol-name
 				  (y-or-n-p "Use custom commands?")))
 
@@ -119,16 +95,20 @@ variables we should replace in the template."
   (unless (file-exists-p pdj:prj--project-dir)
     (make-directory pdj:prj--project-dir t))
 
-  ;; write .dir-locals.el
+  ;; set variables to replace on templates
   (setq pdj:prj--template-vars
 	`(("{{PROJECT-DIRECTORY}}" ,pdj:prj--project-dir)
-	  ("{{TEST-COMMAND}}" ,pdj:prj--test-command)))
+	  ("{{TEST-COMMAND}}" ,pdj:prj--test-command)
+	  ("{{COVERAGE-COMMAND}}" ,pdj:prj--coverage-command)
+	  ("{{PROJECT-NAME}}" ,pdj:prj--project-name)
+	  ("{{IMPORT-BASE}}" ,pdj:prj--import-base)))
 
   (if pdj:prj--custom-commands
       (push `("{{CUSTOM-COMMANDS}}" ,pdj:prj--custom-commands)
 	    pdj:prj--template-vars))
 
 
+  ;; write .dir-locals.el
   (setq pdj:prj--dir-locals-file (pdj:prj-write-dir-locals
 				  "go"
 				  pdj:prj--template-vars
@@ -148,15 +128,115 @@ variables we should replace in the template."
   (customize-save-variable
    'safe-local-variable-values safe-local-variable-values)
 
-  ;; remove useless stuff
+  ;; remove useless stuff from .dir-locals
   (set-buffer (find-file-noselect pdj:prj--dir-locals-file))
   (while (re-search-forward "(pdj:custom-commands . \"nil\")" nil t)
     (replace-match ""))
 
   ;; creating readme
   (pdj:prj-create-readme-file "My cool Go project"
-			      pdj:prj--project-dir))
+			      pdj:prj--project-dir)
 
+  ;; creating Makefile
+  (unless (file-exists-p (concat pdj:prj--project-dir "/Makefile" ))
+    (pdj:prj--go-write-makefile pdj:prj--template-vars
+				pdj:prj--project-dir))
+
+  ;; creating scripts stuff
+  (unless (file-exists-p (concat pdj:prj--project-dir "/scripts"))
+    (make-directory (concat pdj:prj--project-dir "/scripts" ) t))
+
+  (unless (file-exists-p (concat pdj:prj--project-dir "/scripts/env.sh"))
+    (pdj:prj--go-write-env-sh pdj:prj--template-vars
+			      (concat pdj:prj--project-dir "/scripts/")))
+
+  (unless (file-exists-p (concat pdj:prj--project-dir "/scripts/check_coverage.sh"))
+    (pdj:prj--go-write-check-coverage-sh pdj:prj--template-vars
+					 (concat pdj:prj--project-dir, "/scripts/"))))
+
+
+(defun pdj:prj--go-write-makefile (vars dest-dir)
+  "Writes a Makefile at `dest-dir'. `vars' are the variables we should replace
+in the template."
+
+  (setq pdj:prj--template-contents nil)
+  (setq pdj:prj--template-key nil)
+  (setq pdj:prj--template-value nil)
+  (setq pdj:prj--ret nil)
+
+  (setq pdj:prj--template-contents (pdj:read-file
+				    (pdj:prj-get-template-file "Makefile.tmpl")))
+
+
+  (dolist (element vars pdj:prj--ret)
+    (setq pdj:prj--template-key (car element))
+    (setq pdj:prj--template-value (car (cdr element)))
+    (setq pdj:prj--template-contents (replace-regexp-in-string
+				      pdj:prj--template-key
+				      pdj:prj--template-value
+				      pdj:prj--template-contents t)))
+
+  (setq pdj:prj--ret (concat dest-dir "/" "Makefile"))
+
+  (write-region pdj:prj--template-contents nil pdj:prj--ret)
+  pdj:prj--ret)
+
+
+(defun pdj:prj--go-write-env-sh (vars dest-dir)
+  "Writes a env.sh at `dest-dir'. `vars' are the variables we should replace
+in the template."
+
+  (setq pdj:prj--template-contents nil)
+  (setq pdj:prj--template-key nil)
+  (setq pdj:prj--template-value nil)
+  (setq pdj:prj--ret nil)
+
+  (setq pdj:prj--template-contents (pdj:read-file
+				    (pdj:prj-get-template-file "env-go.sh.tmpl")))
+
+  (dolist (element vars pdj:prj--ret)
+    (setq pdj:prj--template-key (car element))
+    (setq pdj:prj--template-value (car (cdr element)))
+    (setq pdj:prj--template-contents (replace-regexp-in-string
+				      pdj:prj--template-key
+				      pdj:prj--template-value
+				      pdj:prj--template-contents t)))
+
+  (setq pdj:prj--ret (concat dest-dir "env.sh"))
+
+  (write-region pdj:prj--template-contents nil pdj:prj--ret)
+  pdj:prj--ret)
+
+
+(defun pdj:prj--go-write-check-coverage-sh (vars dest-dir)
+  "Writes a env.sh at `dest-dir'. `vars' are the variables we should replace
+in the template."
+
+  (setq pdj:prj--template-contents nil)
+  (setq pdj:prj--template-key nil)
+  (setq pdj:prj--template-value nil)
+  (setq pdj:prj--ret nil)
+
+  (setq pdj:prj--template-contents (pdj:read-file
+				    (pdj:prj-get-template-file "check_coverage-go.sh.tmpl")))
+
+  (dolist (element vars pdj:prj--ret)
+    (setq pdj:prj--template-key (car element))
+    (setq pdj:prj--template-value (car (cdr element)))
+    (setq pdj:prj--template-contents (replace-regexp-in-string
+				      pdj:prj--template-key
+				      pdj:prj--template-value
+				      pdj:prj--template-contents t)))
+
+  (setq pdj:prj--ret (concat dest-dir "check_coverage.sh"))
+
+  (write-region pdj:prj--template-contents nil pdj:prj--ret)
+  pdj:prj--ret)
+
+
+;;;;;;;;;;;;;;;;;;;;
+;; python project ;;
+;;;;;;;;;;;;;;;;;;;;
 
 (defun pdj:prj-create-python-project ()
   "Creates a new python project. Creates the project directory  and a setup
@@ -257,9 +337,9 @@ listed in a requirements file using pip."
   (while (re-search-forward "(pdj:custom-commands . \"nil\")" nil t)
     (replace-match ""))
 
-  ;; creating the setup.py file
-  (unless (file-exists-p (concat pdj:prj--project-dir "setup.py"))
-    (pdj:prj-write-setup-py pdj:prj--template-vars pdj:prj--project-dir))
+  ;; creating the pyproject.toml file
+  (unless (file-exists-p (concat pdj:prj--project-dir "pyproject.toml"))
+    (pdj:prj-write-pyproject-toml pdj:prj--template-vars pdj:prj--project-dir))
 
 
   ;; creating readme
@@ -287,16 +367,77 @@ listed in a requirements file using pip."
   (pdj:py-bootstrap))
 
 
-;; menu
+(defun pdj:prj-write-setup-py (vars dest-dir)
+  "Writes a setup.py file in `dest-dir'. `vars' are the
+variables we should replace in the template."
 
-;; (define-key global-map [menu-bar pdj-ede] nil)
+  (setq pdj:prj--template-contents nil)
+  (setq pdj:prj--template-key nil)
+  (setq pdj:prj--template-value nil)
+  (setq pdj:prj--ret nil)
+
+  (setq pdj:prj--template-contents (pdj:read-file
+				    (pdj:prj-get-template-file "setup.py.tmpl")))
+
+  (dolist (element vars pdj:prj--ret)
+    (setq pdj:prj--template-key (car element))
+    (setq pdj:prj--template-value (car (cdr element)))
+    (setq pdj:prj--template-contents (replace-regexp-in-string
+				      pdj:prj--template-key
+				      pdj:prj--template-value
+				      pdj:prj--template-contents t)))
+
+  (setq pdj:prj--ret (concat dest-dir "/" "setup.py"))
+
+  (write-region pdj:prj--template-contents nil pdj:prj--ret)
+  pdj:prj--ret)
+
+(defun pdj:prj-write-pyproject-toml (vars dest-dir)
+  "Writes a pyproject.toml file in `dest-dir'. `vars' are the
+variables we should replace in the template."
+
+  (setq pdj:prj--template-contents nil)
+  (setq pdj:prj--template-key nil)
+  (setq pdj:prj--template-value nil)
+  (setq pdj:prj--ret nil)
+
+  (setq pdj:prj--template-contents (pdj:read-file
+				    (pdj:prj-get-template-file "pyproject.toml.tmpl")))
+
+  (dolist (element vars pdj:prj--ret)
+    (setq pdj:prj--template-key (car element))
+    (setq pdj:prj--template-value (car (cdr element)))
+    (setq pdj:prj--template-contents (replace-regexp-in-string
+				      pdj:prj--template-key
+				      pdj:prj--template-value
+				      pdj:prj--template-contents t)))
+
+  (setq pdj:prj--ret (concat dest-dir "/" "pyproject.toml"))
+
+  (write-region pdj:prj--template-contents nil pdj:prj--ret)
+  pdj:prj--ret)
+
+
+(defun pdj:prj-create-py-requirements-file (req-fname dest-dir)
+  "Creates an empty requirements file for a python project."
+
+  (setq pdj:prj--new-requirements-file (concat dest-dir "/" req-fname))
+
+  (write-region "# put your requirements here\n" nil
+		pdj:prj--new-requirements-file))
+
+
+
+;;;;;;;;;;
+;; menu ;;
+;;;;;;;;;;
 
 (defun pdj:prj-create-menu ()
   "Creates a Development menu with pdj:prj functions."
 
   (interactive)
 
-  ;; new Development menu
+  ;; new Project menu
   (define-key-after global-map [menu-bar pdj-prj]
     (cons "Project" (make-sparse-keymap "Project")) 'Tools)
 

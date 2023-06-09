@@ -475,84 +475,86 @@ If `insert-breakpoint', inserts a breakpoint at point."
 
 ;; Menus
 
-(defun pdj:py-create-menu ()
+(defun pdj:py-create-menu (keymap)
   "Recriates the Python menu changing some of its elements."
 
+  (when (eq keymap nil)
+    (setq keymap python-mode-map))
   (interactive)
   ;; removing python.el menu
-  (define-key python-mode-map [menu-bar Python] nil)
+  (define-key keymap [menu-bar Python] nil)
 
   ;; new python menu
-  (define-key python-mode-map [menu-bar pdj-python]
+  (define-key keymap [menu-bar pdj-python]
     (cons "Python" (make-sparse-keymap "Python")))
 
   ;; shift region stuff
-  (define-key python-mode-map [menu-bar pdj-python shift-region-left]
+  (define-key keymap [menu-bar pdj-python shift-region-left]
     '(menu-item "Shift region left" python-indent-shift-left
 		:enable mark-active
 		:help "Shift region left by a single indentation step"))
 
-  (define-key-after python-mode-map [menu-bar pdj-python shift-region-right]
+  (define-key-after keymap [menu-bar pdj-python shift-region-right]
     '(menu-item "Shift region right" python-indent-shift-right
 		:enable mark-active
 		:help "Shift region left by a single indentation step")
     'shift-region-left)
 
-  (define-key-after python-mode-map [menu-bar pdj-python first-separator]
+  (define-key-after keymap [menu-bar pdj-python first-separator]
     '(menu-item "--") 'shift-region-right)
 
   ;; start/end/definitions of functions/methods/classes
-  (define-key-after python-mode-map [menu-bar pdj-python start-of-defun]
+  (define-key-after keymap [menu-bar pdj-python start-of-defun]
     '(menu-item "Start of def/class" beginning-of-defun
 		:help "Go to start of outermost definition around point")
     'first-separator)
 
-  (define-key-after python-mode-map [menu-bar pdj-python end-of-defun]
+  (define-key-after keymap [menu-bar pdj-python end-of-defun]
     '(menu-item "End of def/class" end-of-defun
 		:help "Go to end of definition around point")
     'start-of-defun)
 
-  (define-key-after python-mode-map [menu-bar pdj-python mark-def-class]
+  (define-key-after keymap [menu-bar pdj-python mark-def-class]
     '(menu-item "Mark def/class" mark-defun
 		:help "Mark outermost definition around point")
     'end-of-defun)
 
-  (define-key-after python-mode-map [menu-bar pdj-python jump-def-class]
+  (define-key-after keymap [menu-bar pdj-python jump-def-class]
     '(menu-item "Jump to def/class" imenu
 		:help "Mark outermost definition around point")
     'mark-def-class)
 
-  (define-key-after python-mode-map [menu-bar pdj-python second-separator]
+  (define-key-after keymap [menu-bar pdj-python second-separator]
     '(menu-item "--") 'jump-def-class)
 
   ;; shell related stuff
-  (define-key-after python-mode-map [menu-bar pdj-python switch-to-shell]
+  (define-key-after keymap [menu-bar pdj-python switch-to-shell]
     '(menu-item "Switch to Python shell" pdj:py-switch-to-shell
 		:help "Switch to inferior Python process.")
     'second-separator)
 
-  (define-key-after python-mode-map [menu-bar pdj-python py-eval-buffer]
+  (define-key-after keymap [menu-bar pdj-python py-eval-buffer]
     '(menu-item "Eval buffer" pdj:py-eval-buffer
 		:help "Eval buffer in inferior Python session")
     'py-eval-string)
 
-  (define-key-after python-mode-map [menu-bar pdj-python py-eval-region]
+  (define-key-after keymap [menu-bar pdj-python py-eval-region]
     '(menu-item "Eval region" pdj:py-eval-region
 		:enable mark-active
 		:help "Eval region in inferior Python session")
     'py-eval-buffer)
 
-  (define-key-after python-mode-map [menu-bar pdj-python py-eval-defun]
+  (define-key-after keymap [menu-bar pdj-python py-eval-defun]
     '(menu-item "Eval def/class" pdj:py-eval-defun
 		:help "Eval defun in inferior Python session")
     'py-eval-region)
 
-  (define-key-after python-mode-map [menu-bar pdj-python py-eval-file]
+  (define-key-after keymap [menu-bar pdj-python py-eval-file]
     '(menu-item "Eval file" pdj:py-eval-file
 		:help "Eval defun in inferior Python session")
     'py-eval-defun)
 
-  (define-key-after python-mode-map [menu-bar pdj-python third-separator]
+  (define-key-after keymap [menu-bar pdj-python third-separator]
     '(menu-item "--") 'py-eval-file)
 
   ;; testing
@@ -574,7 +576,7 @@ If `insert-breakpoint', inserts a breakpoint at point."
 		:help "Run all tests")
     'tests-module)
 
-  (define-key-after python-mode-map [menu-bar pdj-python testing]
+  (define-key-after keymap [menu-bar pdj-python testing]
     (list 'menu-item "Testing" menu-bar-pdj-python-testing))
 
   ;; Debug
@@ -591,7 +593,7 @@ If `insert-breakpoint', inserts a breakpoint at point."
 		:help "Runs test suite on debug frame")
     'debug-test-suite)
 
-  (define-key-after python-mode-map [menu-bar pdj-python debug]
+  (define-key-after keymap [menu-bar pdj-python debug]
     (list 'menu-item "Debug" menu-bar-pdj-python-debug))
 
   ;; Packaging
@@ -601,7 +603,7 @@ If `insert-breakpoint', inserts a breakpoint at point."
     '(menu-item "Upload to PyPI" pdj:py-upload-to-pypi
 		:help "Uploads the package to PyPI"))
 
-  (define-key-after python-mode-map [menu-bar pdj-python packaging]
+  (define-key-after keymap [menu-bar pdj-python packaging]
     (list 'menu-item "Packaging" menu-bar-pdj-python-packaging)))
 
 
@@ -684,6 +686,11 @@ If `insert-breakpoint', inserts a breakpoint at point."
   (delq 'python-pylint flycheck-disabled-checkers))
 
 
+(defun pdj:py-activate-on-pyproject ()
+  (when (string= (buffer-name) "pyproject.toml")
+    (pdj:py-all-hooks)
+    (pdj:py-create-menu conf-toml-mode-map)))
+
 (defun pdj:py-keyboard-hooks ()
   "Custom key bindings. The following bindings are done here:
 
@@ -728,16 +735,18 @@ If `insert-breakpoint', inserts a breakpoint at point."
   (pdj:radon-hooks)
   (pdj:py-set-test-command)
   (pdj:add-project-dir-to-python-path)
-  (pdj:py-create-menu)
+  (pdj:py-create-menu python-mode-map)
   (pdj:py-set-faces)
   (pdj:enable-autopep8)
   (pdj:py-add-custom-keywords))
 
 
 (defun pdj:py-setup ()
-  "Adds pdj:py-all-hooks and py-autopep8-mode to python-mode-hook"
+  "Adds pdj:py-all-hooks to python-mode-hook and pdj:py-activate-on-pyproject
+ to conf-toml-mode-hook"
 
-  (add-hook 'python-mode-hook 'pdj:py-all-hooks))
+  (add-hook 'python-mode-hook 'pdj:py-all-hooks)
+  (add-hook 'conf-toml-mode-hook 'pdj:py-activate-on-pyproject))
 
 
 (defun pdj:py-deactivate ()

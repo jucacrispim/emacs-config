@@ -48,7 +48,7 @@ install: build
 
 .PHONY: uninstall # - Remove the binary from path
 uninstall:
-	go clean -i {{IMPORT-BASE}}/{{PROJECT-NAME}}
+	go clean -i {{IMPORT-BASE}}/$(BIN_NAME)
 
 
 all: build test install

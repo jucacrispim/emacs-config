@@ -688,8 +688,18 @@ If `insert-breakpoint', inserts a breakpoint at point."
 
 (defun pdj:py-activate-on-pyproject ()
   (when (string= (buffer-name) "pyproject.toml")
-    (pdj:py-all-hooks)
-    (pdj:py-create-menu conf-toml-mode-map)))
+    (pdj:py-venv-hooks)
+    (pdj:py-keyboard-hooks)
+    (pdj:py-flycheck-hooks)
+    (pdj:py-ac-hooks)
+    (pdj:radon-hooks)
+    (pdj:py-set-test-command)
+    (pdj:add-project-dir-to-python-path)
+    (pdj:py-set-faces)
+    (pdj:enable-autopep8)
+    (pdj:py-add-custom-keywords)
+    (pdj:py-create-menu conf-toml-mode-map)
+    (pdj:load-custom-commands)))
 
 (defun pdj:py-keyboard-hooks ()
   "Custom key bindings. The following bindings are done here:

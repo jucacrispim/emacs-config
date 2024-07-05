@@ -60,7 +60,7 @@
 
   (setq args (list :type "go"
         :request "launch"
-        :name "Go test function"
+        :name "Test subtest"
         :mode "test"
         :skip-debug-session nil
         :program nil
@@ -93,7 +93,9 @@
 ;; removes breakpoints and close the hydra
 (defun pdj:go-debug-terminated-hooks (session)
   (dap-breakpoint-delete-all)
-  (dap-hydra/nil))
+  (dap-hydra/nil)
+  (kill-buffer "*Go test function server log*")
+  (kill-buffer "*Go test function out*"))
 
 (defun pdj:go-imenu-hooks ()
   (setq imenu-auto-rescan t)

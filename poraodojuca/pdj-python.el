@@ -1,15 +1,43 @@
 ;; Hooks for Python.
-;; Requires: jedi, pdj-utils, pdj-common, virtualenvwrapper,
-;; flycheck and radon
-
 (require 'cl)
-(require 'jedi)
 (require 'pdj-common)
 (require 'pdj-utils)
 (require 'virtualenvwrapper)
 (require 'flycheck)
 (require 'radon)
 (require 'pdj-realgud)
+
+
+
+(use-package lsp-mode
+  :ensure t
+  :commands (lsp lsp-deferred)
+  :hook (python-mode . lsp-deferred))
+
+;; Optional - provides fancier overlays.
+(use-package lsp-ui
+  :ensure t
+  :commands lsp-ui-mode)
+
+;; Company mode is a standard completion package that works well with lsp-mode.
+(use-package company
+  :ensure t
+  :config
+  ;; Optionally enable completion-as-you-type behavior.
+  (setq company-idle-delay 0)
+  (setq company-minimum-prefix-length 2))
+
+;; company-lsp integrates company mode completion with lsp-mode.
+;; completion-at-point also works out of the box but doesn't support snippets.
+(use-package company-lsp
+  :ensure t
+  :commands company-lsp)
+
+;; Optional - provides snippet support.
+(use-package yasnippet
+  :ensure t
+  :commands yas-minor-mode
+  :hook (python-mode . yas-minor-mode))
 
 ;; Customizable vars
 
@@ -102,6 +130,9 @@
   (if pdj:py-autopep8
       (add-hook 'python-mode-hook 'py-autopep8-mode)))
 
+(defun pdj:pylsp-hooks ()
+    (setq lsp-pylsp-plugins-pydocstyle-enabled nil))
+
 (defun pdj:disable-autopep8 ()
   "Removes py-autopep8-mode from python-mode-hook"
 
@@ -151,10 +182,9 @@
 
 
 (defun pdj:py-bootstrap ()
-  "Installs the project dependencies and the jedi server."
+  "Installs the project dependencies and the pyls server."
 
-  (defvar pdj:py--instal-server-cmd
-    (mapconcat 'identity jedi:install-server--command " "))
+  (defvar pdj:py--instal-server-cmd "pip install 'python-lsp-server[all]'")
 
   (pdj:add-project-dir-to-python-path)
   (pdj:py-venv-hooks)
@@ -641,22 +671,6 @@ If `insert-breakpoint', inserts a breakpoint at point."
   (setq python-environment-default-root-name nil))
 
 
-(defun pdj:py-jedi-hooks ()
-  "Hooks for jedi. Setup jedi on python buffers. Jedi activates auto-complete
-   by itself."
-  ;; (setq jedi:setup-keys t)
-  (setq jedi:key-show-doc (kbd "C-c D"))
-  (setq jedi:complete-on-dot t)
-  (jedi:setup))
-
-
-(defun pdj:py-deactivate-jedi-hooks ()
-  "Stops the jedi server."
-
-  (when (boundp 'jedi:stop-server)
-    (jedi:stop-server)))
-
-
 (defun pdj:py-ac-hooks()
   "Removes `ac-source-words-in-same-mode-buffers' from `ac-sources'"
 
@@ -726,7 +740,6 @@ If `insert-breakpoint', inserts a breakpoint at point."
   "Enables all pdj:py hooks. They are:
 
   * pdj:py-venv-hooks
-  * pdj:py-jedi-hooks
   * pdj:py-keyboard-hooks
   * pdj:py-flycheck-hooks
   * pdj:py-ac-hooks
@@ -738,7 +751,6 @@ If `insert-breakpoint', inserts a breakpoint at point."
 
 
   (pdj:py-venv-hooks)
-  (pdj:py-jedi-hooks)
   (pdj:py-keyboard-hooks)
   (pdj:py-flycheck-hooks)
   (pdj:py-ac-hooks)
@@ -748,6 +760,7 @@ If `insert-breakpoint', inserts a breakpoint at point."
   (pdj:py-create-menu python-mode-map)
   (pdj:py-set-faces)
   (pdj:enable-autopep8)
+  (pdj:pylsp-hooks)
   (pdj:py-add-custom-keywords))
 
 
@@ -764,7 +777,6 @@ If `insert-breakpoint', inserts a breakpoint at point."
 
   (pdj:py-reset-customvars)
   (pdj:py-deactivate-venv-hooks)
-  (pdj:py-deactivate-jedi-hooks)
   (pdj:py-deactivate-ac-hooks)
   (pdj:py-deactivate-flycheck-hooks)
   (pdj:disable-autopep8)

@@ -2,6 +2,7 @@
 
 (require 'package)
 (require 'teletype)
+(require 'pdj-utils)
 
 ;; (package-initialize)
 
@@ -53,7 +54,6 @@
 
     (pdj:install-if-needed 'virtualenvwrapper)
     (pdj:install-if-needed 'auto-complete)
-    (pdj:install-if-needed 'jedi)
     (pdj:install-if-needed 'yasnippet)
     (pdj:install-if-needed 'yasnippet-snippets)
     (pdj:install-if-needed 'color-theme-modern)

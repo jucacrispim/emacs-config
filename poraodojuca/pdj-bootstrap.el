@@ -76,8 +76,6 @@
     (pdj:install-if-needed 'use-package)
     (pdj:install-if-needed 'lsp-mode)
     (pdj:install-if-needed 'lsp-ui)
-    (pdj:install-if-needed 'company)
-    (pdj:install-if-needed 'company-lsp)
     (pdj:install-if-needed 'exec-path-from-shell)
 
 

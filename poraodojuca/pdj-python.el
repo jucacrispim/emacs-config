@@ -19,19 +19,6 @@
   :ensure t
   :commands lsp-ui-mode)
 
-;; Company mode is a standard completion package that works well with lsp-mode.
-(use-package company
-  :ensure t
-  :config
-  ;; Optionally enable completion-as-you-type behavior.
-  (setq company-idle-delay 0)
-  (setq company-minimum-prefix-length 2))
-
-;; company-lsp integrates company mode completion with lsp-mode.
-;; completion-at-point also works out of the box but doesn't support snippets.
-(use-package company-lsp
-  :ensure t
-  :commands company-lsp)
 
 ;; Optional - provides snippet support.
 (use-package yasnippet
@@ -702,17 +689,7 @@ If `insert-breakpoint', inserts a breakpoint at point."
 
 (defun pdj:py-activate-on-pyproject ()
   (when (string= (buffer-name) "pyproject.toml")
-    (pdj:py-venv-hooks)
-    (pdj:py-keyboard-hooks)
-    (pdj:py-flycheck-hooks)
-    (pdj:py-ac-hooks)
-    (pdj:radon-hooks)
-    (pdj:py-set-test-command)
-    (pdj:add-project-dir-to-python-path)
-    (pdj:py-set-faces)
-    (pdj:enable-autopep8)
-    (pdj:py-add-custom-keywords)
-    (pdj:py-create-menu conf-toml-mode-map)
+    (pdj:py-all-hooks)
     (pdj:load-custom-commands)))
 
 (defun pdj:py-keyboard-hooks ()

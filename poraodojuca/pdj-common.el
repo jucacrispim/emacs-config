@@ -6,7 +6,7 @@
 (require 'multi-term)
 (require 'yasnippet)
 (require 'pdj-utils)
-(require 'company)
+
 
 
 (defvar pdj:--custom-already-loaded '())
@@ -69,6 +69,36 @@
   (global-set-key (kbd "C-u") 'previous-line)
   (global-set-key (kbd "C-c C-x k") 'pdj:kill-all-buffers))
 
+
+(defun pdj:thinkpad-hacks()
+  (global-set-key (kbd "s-@") 'set-mark-command)
+  (define-key key-translation-map (kbd "s-A") (kbd "C-a"))
+  (define-key key-translation-map (kbd "s-B") (kbd "C-b"))
+  (define-key key-translation-map (kbd "s-C") (kbd "C-c"))
+  (define-key key-translation-map (kbd "s-D") (kbd "C-d"))
+  (define-key key-translation-map (kbd "s-E") (kbd "C-e"))
+  (define-key key-translation-map (kbd "s-F") (kbd "C-f"))
+  (define-key key-translation-map (kbd "s-G") (kbd "C-g"))
+  (define-key key-translation-map (kbd "s-H") (kbd "C-h"))
+  (define-key key-translation-map (kbd "s-I") (kbd "C-i"))
+  (define-key key-translation-map (kbd "s-J") (kbd "C-j"))
+  (define-key key-translation-map (kbd "s-K") (kbd "C-k"))
+  (define-key key-translation-map (kbd "s-L") (kbd "C-l"))
+  (define-key key-translation-map (kbd "s-M") (kbd "C-m"))
+  (define-key key-translation-map (kbd "s-N") (kbd "C-n"))
+  (define-key key-translation-map (kbd "s-O") (kbd "C-o"))
+  (define-key key-translation-map (kbd "s-P") (kbd "C-p"))
+  (define-key key-translation-map (kbd "s-Q") (kbd "C-q"))
+  (define-key key-translation-map (kbd "s-R") (kbd "C-r"))
+  (define-key key-translation-map (kbd "s-S") (kbd "C-s"))
+  (define-key key-translation-map (kbd "s-T") (kbd "C-t"))
+  (define-key key-translation-map (kbd "s-U") (kbd "C-u"))
+  (define-key key-translation-map (kbd "s-V") (kbd "C-v"))
+  (define-key key-translation-map (kbd "s-W") (kbd "C-w"))
+  (define-key key-translation-map (kbd "s-X") (kbd "C-x"))
+  (define-key key-translation-map (kbd "s-Y") (kbd "C-y"))
+  (define-key key-translation-map (kbd "s-Z") (kbd "C-z"))
+  (define-key key-translation-map (kbd "s-Ç") (kbd "C-ç")))
 
 (defun pdj:prog-keyboard-hooks ()
   "Keybindings for prog-mode. The following bindings are done here:
@@ -133,16 +163,6 @@
   (yas/load-directory "~/.emacs.d/my-snippets/"))
 
 
-(defun pdj:company-common-hooks ()
-  "Customizations to company
-  * Sets `C-n' and `C-p' to navigate throught menu results."
-
-  (define-key company-active-map (kbd "C-n") 'company-select-next)
-  (define-key company-active-map (kbd "C-p") 'company-select-previous)
-  (define-key company-search-map (kbd "C-n") 'company-select-next)
-  (define-key company-search-map (kbd "C-p") 'company-select-previous))
-
-
 (defun pdj:add-comments-menu-item ()
   "Adds menu comments related items to edit menu."
 
@@ -164,10 +184,10 @@
 
 (defun pdj:common-setup ()
   (pdj:common-keyboard-hooks)
+  (pdj:thinkpad-hacks)
   (pdj:ac-common-hooks)
   (pdj:add-comments-menu-item)
   (pdj:compilation-hooks)
-  (pdj:company-common-hooks)
   (add-hook 'write-file-hooks 'pdj:delete-trailing-whitespace)
   (add-hook 'term-mode-hook 'pdj:multi-term-hooks)
   (add-to-list 'auto-mode-alist '("\\.migration\\'" . sql-mode))

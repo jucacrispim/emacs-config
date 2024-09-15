@@ -72,6 +72,7 @@
 
 (defun pdj:thinkpad-hacks()
   (global-set-key (kbd "s-@") 'set-mark-command)
+  (global-set-key (kbd "M-_") 'undo)
   (define-key key-translation-map (kbd "s-A") (kbd "C-a"))
   (define-key key-translation-map (kbd "s-B") (kbd "C-b"))
   (define-key key-translation-map (kbd "s-C") (kbd "C-c"))
@@ -180,7 +181,6 @@
 (defun pdj:compilation-hooks ()
   "Sets the compilation buffer to follow output"
   (setq compilation-scroll-output t))
-
 
 (defun pdj:common-setup ()
   (pdj:common-keyboard-hooks)

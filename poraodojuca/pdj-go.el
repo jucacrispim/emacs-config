@@ -40,7 +40,8 @@
     (setq pdj:test-command pdj:go-test-command))
 
   (if (boundp 'pdj:test-suite-prefix)
-      (setq pdj:py-test-suite-prefix pdj:test-suite-prefix)))
+      (setq pdj:go-test-suite-prefix pdj:test-suite-prefix)))
+
 
 (defun pdj:go-debug-test()
   (interactive)
@@ -53,9 +54,20 @@
         :program nil
         :args nil
         :env nil))
+
+  (defun dap-dlv-go--extract-current-subtest-name (&optional no-signal?)
+    (pdj:go-subtest-at-point))
+
   (dap-debug args)
   (other-window 1)
   (dap-hydra))
+
+
+(defun pdj:go-subtest-at-point()
+  (setq pdj:--go-subtest-prev (buffer-substring-no-properties
+			       (line-beginning-position) (line-end-position)))
+  (setq pdj:--go-subtest-prev  (replace-regexp-in-string "^.*?\"" "" pdj:--go-subtest-prev))
+  (setq pdj:--go-subtest (replace-regexp-in-string "\".*" "" pdj:--go-subtest-prev)))
 
 
 (defun pdj:go-set-tab-width ()
@@ -77,12 +89,16 @@
   (add-hook 'before-save-hook #'lsp-format-buffer t t)
   (add-hook 'before-save-hook #'lsp-organize-imports t t))
 
-;; removes breakpoints and close the hydra
+;; removes breakpoints, closes the hydra and kill
+;; dap related buffers
 (defun pdj:go-debug-terminated-hooks (session)
   (dap-breakpoint-delete-all)
   (dap-hydra/nil)
-  (kill-buffer "*Go test function server log*")
-  (kill-buffer "*Go test function out*"))
+  (setq pdj:--go-dap-buffers2kill (mapcar 'buffer-name (buffer-list)))
+  (dolist (buff pdj:--go-dap-buffers2kill nil)
+    (if (or (string-match "\*dap" buff)
+	    (string-match "\*Test" buff))
+	(kill-buffer (get-buffer buff)))))
 
 (defun pdj:go-imenu-hooks ()
   (setq imenu-auto-rescan t)

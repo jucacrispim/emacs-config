@@ -76,7 +76,9 @@
     (pdj:install-if-needed 'use-package)
     (pdj:install-if-needed 'lsp-mode)
     (pdj:install-if-needed 'lsp-ui)
+    (pdj:install-if-needed 'company-go)
     (pdj:install-if-needed 'exec-path-from-shell)
+    
 
 
     (pdj:print "\nAll canons acquired.")

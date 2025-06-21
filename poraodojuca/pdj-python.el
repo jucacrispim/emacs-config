@@ -8,7 +8,6 @@
 (require 'pdj-realgud)
 
 
-
 (use-package lsp-mode
   :ensure t
   :commands (lsp lsp-deferred)

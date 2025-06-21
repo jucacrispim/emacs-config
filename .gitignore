@@ -31,3 +31,7 @@ tutorial/
 /package-lock.json
 /projects
 /eln-cache/
+/eaf/
+*.elc
+/site-lisp/
+/tree-sitter/

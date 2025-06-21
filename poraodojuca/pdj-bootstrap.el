@@ -77,8 +77,11 @@
     (pdj:install-if-needed 'lsp-mode)
     (pdj:install-if-needed 'lsp-ui)
     (pdj:install-if-needed 'company-go)
+    (pdj:install-if-needed 'deferred)
     (pdj:install-if-needed 'exec-path-from-shell)
-    
+    (pdj:install-if-needed 'vterm)
+    (pdj:install-if-needed 'multiple-cursors)
+
 
 
     (pdj:print "\nAll canons acquired.")

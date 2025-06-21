@@ -25,6 +25,7 @@
 
 
 (defun pdj:--do-setup ()
+  (require 'pdj-term)
   (require 'pdj-common)
   (require 'pdj-python)
   (require 'pdj-elisp)
@@ -33,8 +34,8 @@
   (require 'pdj-feature)
   (require 'pdj-slang)
   (require 'pdj-appearance)
-  (require 'pdj-appearance)
   (require 'pdj-go)
+  (require 'pdj-eaf)
 
   (if pdj:appearance (pdj:appearance-setup))
 
@@ -42,14 +43,17 @@
     	       '("melpa" . "http://melpa.org/packages/"))
 
   (pdj:common-setup)
+  (pdj:term-setup)
   (pdj:py-setup)
   (pdj:el-setup)
   (pdj:js-setup)
   (pdj:prj-setup)
   (pdj:go-setup)
+  (pdj:eaf-setup)
   ;; doing it by last so everything we do in the custom-commnd.el
   ;; overwrites the default stuff.
   (add-hook 'prog-mode-hook 'pdj:load-custom-commands)
+  (add-hook 'text-mode-hook 'pdj:load-custom-commands)
 
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize))
@@ -61,6 +65,7 @@
   "Sets up all stuff needed for pdj's emacs."
 
   (server-start)
+  (setq ring-bell-function 'ignore)
 
   (if (pdj:boostrap-is-done)
       (pdj:--do-setup)

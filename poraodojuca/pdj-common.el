@@ -1,10 +1,10 @@
 ;; Global hooks and key bindings used in all languages.
-;; Requires pdj-utils, buffer-move, multi-term and yasnippet
+;; Requires pdj-utils, buffer-move, and yasnippet
 
 (require 'auto-complete)
 (require 'buffer-move)
-(require 'multi-term)
 (require 'yasnippet)
+(require 'multiple-cursors)
 (require 'pdj-utils)
 
 
@@ -23,14 +23,14 @@
   * `C-s-right' - Moves buffer right
   * `C-S-right' - Shift region to right
   * `C-S-left' - Shift region to left
-  * `€' - Copy region as kill
+  * `altgr-e' - Copy region as kill
   * `°' - Copy region as kill
   * `C-2' - Set mark
+  * `C-3' - multiple-cursor mark next like this
   * `M-;' - `dabbrev-expand'
-  * `C-ŧ' - `multi-term'
   * `“' - `scroll-down-command'
-  * `C-æ' - `mark-whole-line'
-  * `C-ß' - `mark-whole-buffer'
+  * `C-altgr-a' - `mark-whole-line'
+  * `C-altgr-s' - `mark-whole-buffer'
   * `M-i' - `browse-kill-ring'
   * `đ' - `forward-word'
   * `”' - `backward-word'
@@ -39,7 +39,7 @@
   * `C-c gs' - `magit-status'
   * `meta-return' - `menu-bar-mode'
   * `C-ç' - `other-window'
-  * `C-i' - `previous-line'
+  * `C-u' - `previous-line'
   * `C-c C-x k' - `pdj:kill-all-buffers'"
 
 
@@ -54,8 +54,8 @@
   (global-set-key (kbd "€") 'copy-region-as-kill)
   (global-set-key (kbd "°") 'copy-region-as-kill)
   (global-set-key (kbd "C-2") 'set-mark-command)
+  (global-set-key (kbd "C-3") 'mc/mark-next-like-this)
   (global-set-key (kbd "M-;") 'dabbrev-expand)
-  (global-set-key (kbd "C-ŧ") 'multi-term)
   (global-set-key (kbd "“") 'scroll-down-command)
   (global-set-key (kbd "C-æ") 'pdj:mark-whole-line)
   (global-set-key (kbd "C-ß") 'mark-whole-buffer)
@@ -138,17 +138,6 @@
 		(load-file pdj--custom-file)))))))
 
 
-(defun pdj:multi-term-hooks ()
-  "Customizations to multi-term.
-  * Sets `multi-term-program' to /usr/bin/zsh
-  * Disables yas-minor-mode
-  * Sets `term-paste' to `C-y' on `term-raw-map'"
-
-  (setq multi-term-program "/usr/bin/zsh")
-  (yas-minor-mode -1)
-  (define-key term-raw-map (kbd "C-y") 'term-paste))
-
-
 (defun pdj:ac-common-hooks ()
   "Customizations to auto complete.
   * Lets tab for 'indent-for-tab-command
@@ -189,7 +178,6 @@
   (pdj:add-comments-menu-item)
   (pdj:compilation-hooks)
   (add-hook 'write-file-hooks 'pdj:delete-trailing-whitespace)
-  (add-hook 'term-mode-hook 'pdj:multi-term-hooks)
   (add-to-list 'auto-mode-alist '("\\.migration\\'" . sql-mode))
   (add-to-list 'auto-mode-alist '("toxicbuild.conf\\'" . python-mode))
   (add-to-list 'auto-mode-alist '("\\.feature\\'" . pdj:feature-mode))

@@ -8,8 +8,7 @@
 (add-to-list 'load-path "~/.emacs.d/poraodojuca")
 (add-to-list 'load-path "~/.emacs.d/poraodojuca/jasmacs")
 (add-to-list 'load-path "~/.emacs.d/third")
-(add-to-list 'load-path "~/.emacs.d/third/multi-term-20150220.1320-pdj/")
-;; (add-to-list 'load-path "~/.emacs.d/third/mu4e/")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-application-framework/")
 (load-library "debian-init")
 
 (require 'pdj)
@@ -22,3 +21,5 @@
 (setq local-setup-file (expand-file-name "~/.emacs.d/local-setup.el"))
 (if (file-exists-p local-setup-file)
     (load-file local-setup-file))
+
+(put 'narrow-to-region 'disabled nil)

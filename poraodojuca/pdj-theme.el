@@ -51,7 +51,8 @@
  '(company-preview ((t (:background "gray17"))))
  '(company-preview ((t (:foreground "pale violet red"))))
  '(company-preview-common ((t (:foreground "white"))))
- '(company-tooltip-selection ((t (:background "gray6")))))
+ '(company-tooltip-selection ((t (:background "gray6"))))
+ '(fill-column-indicator ((t (:foreground "#4A4A4A")))))
 
 
 ;;;###autoload

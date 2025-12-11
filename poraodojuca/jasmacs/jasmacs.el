@@ -57,7 +57,7 @@ in your project root dir. May be customized via .dir-locals.el too")
 	(pdj:run-in-term-on-project-directory cmd jasmacs:buffer-name)
       (if jasmacs:--orig-venv-name
 	  (venv-workon jasmacs:--orig-venv-name)
-	(venv-deactivate))))))
+	(venv-deactivate)))))))
 
 (defun jasmacs:install-server ()
   (interactive)

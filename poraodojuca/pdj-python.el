@@ -6,6 +6,7 @@
 (require 'flycheck)
 (require 'radon)
 (require 'pdj-realgud)
+(require 'deferred)
 
 
 (use-package lsp-mode
@@ -669,6 +670,12 @@ If `insert-breakpoint', inserts a breakpoint at point."
   (add-to-list 'ac-sources 'ac-source-words-in-same-mode-buffers))
 
 
+(defun pdj:py-column-indicator()
+  "Enables the column indicator mode on python files"
+  (setq-default fill-column 80)
+  (display-fill-column-indicator-mode)
+
+
 (defun pdj:radon-hooks ()
   "Sets radon limit to B."
   (setq radon-analize-args '("-n" "B")))
@@ -723,7 +730,9 @@ If `insert-breakpoint', inserts a breakpoint at point."
   * pdj:py-create-menu
   * pdj:py-add-custom-keywords
   * pdj:py-set-faces
-  * pdj:enable-autopep8"
+  * pdj:enable-autopep8
+  * pdj:pylsp-hooks
+  * pdj:py-column-indicator"
 
 
   (pdj:py-venv-hooks)
@@ -737,7 +746,8 @@ If `insert-breakpoint', inserts a breakpoint at point."
   (pdj:py-set-faces)
   (pdj:enable-autopep8)
   (pdj:pylsp-hooks)
-  (pdj:py-add-custom-keywords))
+  (pdj:py-add-custom-keywords)
+  (pdj:py-column-indicator))
 
 
 (defun pdj:py-setup ()

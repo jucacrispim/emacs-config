@@ -38,6 +38,8 @@
   (require 'pdj-eaf)
 
   (if pdj:appearance (pdj:appearance-setup))
+  (setq ring-bell-function 'ignore)
+
 
   (add-to-list 'package-archives
     	       '("melpa" . "http://melpa.org/packages/"))
@@ -65,7 +67,6 @@
   "Sets up all stuff needed for pdj's emacs."
 
   (server-start)
-  (setq ring-bell-function 'ignore)
 
   (if (pdj:boostrap-is-done)
       (pdj:--do-setup)

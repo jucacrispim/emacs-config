@@ -673,7 +673,7 @@ If `insert-breakpoint', inserts a breakpoint at point."
 (defun pdj:py-column-indicator()
   "Enables the column indicator mode on python files"
   (setq-default fill-column 80)
-  (display-fill-column-indicator-mode)
+  (display-fill-column-indicator-mode))
 
 
 (defun pdj:radon-hooks ()

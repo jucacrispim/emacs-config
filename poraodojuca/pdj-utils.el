@@ -33,6 +33,15 @@
   (pdj:execute-on-project-directory 'pdj:run-in-term command term-name)
   nil)
 
+(defun pdj:run-in-term-on-project-directory-on-background (command &optional term-name)
+  "Runs `command' in a terminal, changing `default-directory' to
+   `pdj:project-directory'. Runs the command in a background shell buffer"
+
+  (interactive)
+
+  (pdj:execute-on-project-directory 'pdj:run-in-term-on-background command term-name)
+  nil)
+
 
 (defun pdj:shell-command-on-project-directory (command &optional buffer-name)
   "Runs `command' in a shell (blocking), changing `default-directory' to

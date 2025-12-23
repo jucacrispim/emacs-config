@@ -36,6 +36,7 @@
   (require 'pdj-appearance)
   (require 'pdj-go)
   (require 'pdj-eaf)
+  (require 'pdj-ablog)
 
   (if pdj:appearance (pdj:appearance-setup))
   (setq ring-bell-function 'ignore)
@@ -52,6 +53,7 @@
   (pdj:prj-setup)
   (pdj:go-setup)
   (pdj:eaf-setup)
+  (pdj:ablog-setup)
   ;; doing it by last so everything we do in the custom-commnd.el
   ;; overwrites the default stuff.
   (add-hook 'prog-mode-hook 'pdj:load-custom-commands)

@@ -69,6 +69,7 @@ fi" pdj:ablog-build-cmd (pdj:ablog-web-path)))
 (defun pdj:ablog-web-path  ()
   "Returns the path to be used in the url for the current post buffer"
 
+  (hack-local-variables)
   (setq pdj--rel-dir (replace-regexp-in-string
 		      pdj:project-directory "" (buffer-file-name)))
 
